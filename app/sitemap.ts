@@ -3,7 +3,7 @@ import { createSupabaseServerClient } from '@/lib/supabaseServer'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const supabase = await createSupabaseServerClient();
-    const baseUrl = 'https://rentasnevada.com';
+    const baseUrl = 'https://staynevada.us';
 
     // 1. Fetch all listings
     const { data: listings } = await supabase

@@ -1,7 +1,7 @@
 {
-    "name": "Rentas Nevada",
-    "short_name": "Rentas NV",
-    "description": "Encuentra tu próximo hogar en Nevada - Casas, departamentos y cuartos en renta",
+    "name": "Stay Nevada",
+    "short_name": "Stay NV",
+    "description": "Find your next home in Nevada - Houses, apartments and rooms for rent",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",

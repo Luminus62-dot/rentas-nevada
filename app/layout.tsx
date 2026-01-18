@@ -11,23 +11,23 @@ import { I18nProvider } from "@/lib/i18n";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Rentas Nevada | Encuentra tu hogar en Nevada",
-  description: "Plataforma de búsqueda de propiedades en renta en Nevada. Encuentra casas, departamentos y cuartos verificados.",
-  keywords: "rentas nevada, casas en renta, departamentos nevada, alquiler las vegas",
-  authors: [{ name: "Rentas Nevada" }],
-  metadataBase: new URL('https://rentasnevada.com'),
+  title: "Stay Nevada | Find Your Home in Nevada",
+  description: "Property rental platform in Nevada. Find verified houses, apartments and rooms.",
+  keywords: "nevada rentals, houses for rent, apartments nevada, las vegas housing",
+  authors: [{ name: "Stay Nevada" }],
+  metadataBase: new URL('https://staynevada.us'),
   manifest: '/manifest.json',
   themeColor: '#6366f1',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Rentas Nevada',
+    title: 'Stay Nevada',
   },
   openGraph: {
-    title: "Rentas Nevada",
-    description: "Encuentra tu próximo hogar en Nevada",
+    title: "Stay Nevada",
+    description: "Find your next home in Nevada",
     type: "website",
-    locale: "es_MX",
+    locale: "en_US",
   },
 };
 

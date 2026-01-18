@@ -5,4 +5,4 @@ Disallow: /dashboard/
 Disallow: /chat/
 Disallow: /profile/
 
-Sitemap: https://rentasnevada.com/sitemap.xml
+Sitemap: https://staynevada.us/sitemap.xml
