@@ -17,7 +17,7 @@ export default function Footer() {
                         <a href="/faq" className="hover:text-foreground transition-colors">{t("footer.faq")}</a>
                         <a href="/terms" className="hover:text-foreground transition-colors">{t("footer.terms")}</a>
                         <a href="/privacy" className="hover:text-foreground transition-colors">{t("footer.privacy")}</a>
-                        <a href="mailto:soporte@staynevada.us" className="hover:text-foreground transition-colors">{t("footer.contact")}</a>
+                        <a href="mailto:support@staynevada.us" className="hover:text-foreground transition-colors">{t("footer.contact")}</a>
                     </div>
                 </div>
             </div>

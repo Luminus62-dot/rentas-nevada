@@ -255,7 +255,7 @@ export default function PostPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">Inicia Sesión</h1>
-              <p className="text-muted-foreground mt-2">Necesitas una cuenta para publicar propiedades en Rentas Nevada.</p>
+              <p className="text-muted-foreground mt-2">Necesitas una cuenta para publicar propiedades en Stay Nevada.</p>
             </div>
             <div className="flex gap-4 justify-center pt-2">
               <Link href="/login" className="flex-1 bg-primary text-primary-foreground py-2.5 rounded-lg font-medium hover:bg-primary/90 transition-all shadow-md hover:shadow-lg active:scale-95">

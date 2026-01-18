@@ -21,12 +21,12 @@ export async function generateMetadata(
 
   if (!listing) {
     return {
-      title: "Propiedad No Encontrada | Rentas Nevada",
+      title: "Property Not Found | Stay Nevada",
     };
   }
 
   const neighborhoodInfo = listing.neighborhood || listing.city || "Nevada";
-  const title = `${listing.title} | $${listing.price} en ${neighborhoodInfo} | Rentas Nevada`;
+  const title = `${listing.title} | $${listing.price} in ${neighborhoodInfo} | Stay Nevada`;
   const description = listing.description?.slice(0, 160) || `Encuentra esta propiedad en ${neighborhoodInfo}. Renta mensual de $${listing.price}.`;
 
   return {

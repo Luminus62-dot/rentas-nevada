@@ -6,7 +6,7 @@ export function WhatsAppButton({ phone, listingTitle }: { phone: string, listing
     if (!phone) return null;
 
     const formattedPhone = phone.replace(/\D/g, ""); // Remove non-digits
-    const message = encodeURIComponent(`Hola! Vi tu anuncio "${listingTitle || 'en Rentas Nevada'}" y me interesa.`);
+    const message = encodeURIComponent(`Hola! Vi tu anuncio "${listingTitle || 'en Stay Nevada'}" y me interesa.`);
     const wpUrl = `https://wa.me/${formattedPhone}?text=${message}`;
 
     return (

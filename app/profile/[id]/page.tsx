@@ -169,7 +169,7 @@ export default function PublicProfile() {
                         {/* Name & Badge */}
                         <div className="flex-1 pb-4 text-center md:text-left">
                             <h1 className="text-3xl font-bold text-white mb-1 flex flex-col md:flex-row items-center md:items-end gap-3">
-                                {profile.full_name || "Usuario de Rentas Nevada"}
+                                {profile.full_name || "Stay Nevada User"}
                                 <TrustBadge score={trustScore} />
                             </h1>
                             <p className="text-indigo-100 font-medium">

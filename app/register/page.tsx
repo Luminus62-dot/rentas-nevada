@@ -93,7 +93,7 @@ export default function RegisterPage() {
             ✨
           </div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">Crear Cuenta</h1>
-          <p className="text-muted-foreground mt-2">Unete a la comunidad de Rentas Nevada</p>
+          <p className="text-muted-foreground mt-2">Únete a la comunidad de Stay Nevada</p>
         </div>
 
         <form onSubmit={onSubmit} className="space-y-6">

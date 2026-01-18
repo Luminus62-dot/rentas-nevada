@@ -89,9 +89,9 @@ export default function NavBar() {
         {/* Logo */}
         <Link href="/" className="text-xl font-bold tracking-tight flex items-center gap-2">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
-            R
+            S
           </div>
-          <span>Rentas<span className="text-primary">Nevada</span></span>
+          <span>Stay<span className="text-primary">Nevada</span></span>
         </Link>
 
         {/* Desktop Navigation */}
