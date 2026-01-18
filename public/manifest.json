@@ -1,0 +1,55 @@
+{
+    "name": "Rentas Nevada",
+    "short_name": "Rentas NV",
+    "description": "Encuentra tu próximo hogar en Nevada - Casas, departamentos y cuartos en renta",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#6366f1",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "lifestyle",
+        "business"
+    ],
+    "screenshots": [],
+    "shortcuts": [
+        {
+            "name": "Buscar Propiedades",
+            "short_name": "Buscar",
+            "description": "Buscar casas y departamentos",
+            "url": "/search",
+            "icons": [
+                {
+                    "src": "/icons/icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Publicar Anuncio",
+            "short_name": "Publicar",
+            "description": "Publica tu propiedad",
+            "url": "/post",
+            "icons": [
+                {
+                    "src": "/icons/icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ]
+}

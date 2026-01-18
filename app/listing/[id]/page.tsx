@@ -1,55 +1,45 @@
-import type { Listing } from "@/lib/types";
-import { supabaseServer } from "../../../lib/supabaseServer";
-import LeadForm from "@/components/LeadForm";
+import { Metadata, ResolvingMetadata } from "next";
+import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import ListingView from "./ListingView";
+import { Listing } from "@/lib/types";
 
+type Props = {
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
-export default async function ListingDetail({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-
-  const { data, error } = await supabaseServer
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const supabase = await createSupabaseServerClient();
+  const { data: listing } = await supabase
     .from("listings")
-    .select("*")
-    .eq("id", id)
+    .select("title, description, city, neighborhood, price")
+    .eq("id", params.id)
     .single();
 
-  if (error || !data) return <p>No encontrado</p>;
+  if (!listing) {
+    return {
+      title: "Propiedad No Encontrada | Rentas Nevada",
+    };
+  }
 
-  const listing = data as Listing;
+  const neighborhoodInfo = listing.neighborhood || listing.city || "Nevada";
+  const title = `${listing.title} | $${listing.price} en ${neighborhoodInfo} | Rentas Nevada`;
+  const description = listing.description?.slice(0, 160) || `Encuentra esta propiedad en ${neighborhoodInfo}. Renta mensual de $${listing.price}.`;
 
-  return (
-    <div className="max-w-xl">
-      <h1 className="text-2xl font-bold">{listing.title}</h1>
-      <p className="mt-2">${listing.price} / mes</p>
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+    },
+  };
+}
 
-      <p className="mt-2 text-gray-700">
-        {listing.city ?? ""} {listing.area ? `• ${listing.area}` : ""}
-      </p>
-
-      <p className="mt-2">
-        Tipo: <b>{listing.type}</b> •{" "}
-        {listing.furnished ? "Amueblado" : "No amueblado"}
-      </p>
-
-      {listing.available_from && (
-        <p className="mt-2">Disponible desde: {listing.available_from}</p>
-      )}
-
-      {listing.verified_status === "verified" ? (
-        <p className="mt-3 text-green-600">✅ Verificado</p>
-      ) : (
-        <p className="mt-3 text-yellow-700">⏳ No verificado</p>
-      )}
-
-      {listing.description && (
-        <p className="mt-4 whitespace-pre-wrap">{listing.description}</p>
-      )}
-      <LeadForm listingId={id} />
-
-    </div>
-    
-  );
+export default function ListingPage({ params }: Props) {
+  return <ListingView listingId={params.id} />;
 }

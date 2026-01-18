@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /chat/
+Disallow: /profile/
+
+Sitemap: https://rentasnevada.com/sitemap.xml

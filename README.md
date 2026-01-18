@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rentas Nevada - Plataforma de Bienes Raíces
 
-## Getting Started
+Plataforma moderna y premium para la publicación y gestión de rentas y bienes raíces. Desarrollada con **Next.js 16**, **Supabase** y **Tailwind CSS**.
 
-First, run the development server:
+## ✨ Características Principales
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 🎨 Diseño "Clean Premium"
+- **UI de Alta Gama**: Interfaz minimalista con efectos de cristal (glassmorphism), fondos interactivos y tipografía refinada (Inter).
+- **Modo Oscuro/Claro**: Soporte nativo para temas preferidos por el usuario.
+- **Micro-interacciones**: Animaciones suaves, efectos de hover y feedback visual instantáneo.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 👥 Gestión de Usuarios
+- **Autenticación Robusta**: Registro e inicio de sesión seguro vía Supabase.
+- **Roles de Usuario**:
+  - **Inquilino (Tenant)**: Busca y contacta propiedades.
+  - **Propietario (Landlord)**: Publica y gestiona sus listados.
+  - **Administrador**: Control total de la plataforma.
+- **Verificación de Identidad**: Sistema de verificación manual para aumentar la confianza en la plataforma.
+- **Dashboard Personal**: Panel para ver listados propios, leads recibidos y estado de cuenta.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 🏠 Gestión de Propiedades
+- **Publicación Avanzada**: Flujo de creación de anuncios con carga de imágenes y validación.
+- **Búsqueda y Filtros**: Explorador de propiedades con filtros por precio, ubicación y tipo.
+- **Detalle de Propiedad**: Página de producto rica con galería de imágenes, mapa y formulario de contacto (Lead Form).
+- **Estados de Anuncio**:
+  - `Pendiente`: Esperando aprobación.
+  - `Verificado`: Visible para todos.
+  - `Archivado`: Oculto temporalmente por el usuario o admin.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🛡️ Panel de Administración (Admin V2)
+Un centro de comando profesional para los administradores del sitio (`/admin`).
+- **Dashboard de Estadísticas**: Vista general en tiempo real de usuarios, propiedades y solicitudes.
+- **Gestión de Usuarios**:
+  - Lista completa de usuarios con búsqueda inteligente.
+  - Visualización de datos sensibles (Email, ID, Fecha de registro).
+  - Herramienta de verificación de identidad con un clic.
+- **Gestión de Contenido**:
+  - Moderación de anuncios (Aprobar, Rechazar, Archivar).
+  - Destacar propiedades premium.
+- **Solicitudes de Servicio**: Sistema de tickets para gestionar peticiones de verificación o soporte.
 
-## Learn More
+## 🛠️ Tecnologías
 
-To learn more about Next.js, take a look at the following resources:
+- **Frontend**: Next.js 16 (App Router), React 19.
+- **Estilos**: Tailwind CSS v4, Framer Motion (conceptos base).
+- **Backend/DB**: Supabase (PostgreSQL, Auth, Storage, RLS).
+- **Seguridad**: Row Level Security (RLS) y funciones RPC seguras para datos administrativos.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🚀 Instalación y Configuración
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1.  **Clonar el repositorio**
+2.  **Configurar Variables de Entorno** (`.env.local`)
+    ```env
+    NEXT_PUBLIC_SUPABASE_URL=tu_url_supabase
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_key_anonima
+    ```
+3.  **Instalar dependencias**
+    ```bash
+    npm install
+    ```
+4.  **Iniciar servidor de desarrollo**
+    ```bash
+    npm run dev
+    ```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🔐 Políticas de Seguridad
+El sistema utiliza **RLS (Row Level Security)** para garantizar que:
+- Los usuarios solo pueden editar su propio perfil y propiedades.
+- Los datos sensibles (emails) solo son accesibles por el Administrador mediante funciones seguras.
+- Las propiedades "Archivadas" o "Pendientes" no son visibles en el feed público.

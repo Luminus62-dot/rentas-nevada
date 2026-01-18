@@ -1,168 +1,78 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
-import type { Listing } from "@/lib/types";
-
-type Lead = {
-  id: string;
-  listing_id: string;
-  name: string | null;
-  message: string;
-  created_at: string;
-};
-type ServiceType = "verification" | "featured" | "posted_by_us";
-
+import { supabase } from "@/lib/supabaseClient";
+import { InteractiveBackground } from "@/components/InteractiveBackground";
+import { TenantDashboard } from "@/components/dashboards/TenantDashboard";
+import { LandlordDashboard } from "@/components/dashboards/LandlordDashboard";
+import { Card } from "@/components/Card";
+import type { Listing, Lead, ServiceType } from "@/lib/types"; // Import types if needed, though dashboards might handle data internally now
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [items, setItems] = useState<Listing[]>([]);
-  const [leads, setLeads] = useState<Lead[]>([]);
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      const { data: userData } = await supabase.auth.getUser();
-      const user = userData.user;
+    async function loadSession() {
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        router.push("/login");
+        router.push("/login"); // Secure redirect
         return;
       }
+      setUser(user);
 
-      // Mis anuncios
-      const { data: listingsData } = await supabase
-        .from("listings")
+      // Load Profile for Role
+      const { data: profileData } = await supabase
+        .from("profiles")
         .select("*")
-        .eq("owner_id", user.id)
-        .order("created_at", { ascending: false });
+        .eq("id", user.id)
+        .single();
 
-      const listings = (listingsData ?? []) as Listing[];
-      setItems(listings);
-
-      // Leads recibidos (por RLS solo te deja ver los tuyos)
-      const { data: leadsData } = await supabase
-        .from("leads")
-        .select("id, listing_id, name, message, created_at")
-        .order("created_at", { ascending: false })
-        .limit(100);
-
-      setLeads((leadsData ?? []) as Lead[]);
+      setProfile(profileData);
       setLoading(false);
     }
-
-    load();
+    loadSession();
   }, [router]);
 
-  async function logout() {
-    await supabase.auth.signOut();
-    router.push("/");
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-dots-pattern">
+        <div className="text-primary animate-pulse font-medium">Cargando tu espacio...</div>
+      </div>
+    );
   }
 
-  if (loading) return <p>Cargando...</p>;
-
-  // helper: titulo del anuncio por id
-  const titleById = new Map(items.map((x) => [x.id, x.title]));
-
-  async function requestService(listingId: string, serviceType: string) {
-    const { data: userData } = await supabase.auth.getUser();
-    const user = userData.user;
-    if (!user) return;
-
-    await supabase.from("service_requests").insert({
-      listing_id: listingId,
-      owner_id: user.id,
-      service_type: serviceType,
-      status: "new",
-    });
-
-    alert("✅ Solicitud enviada.");
-  }
+  // Determine which dashboard to show
+  const isLandlord = profile?.role === 'landlord';
+  const isAdmin = profile?.role === 'admin';
 
   return (
-    <div className="max-w-3xl">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <button onClick={logout} className="border p-2 rounded">
-          Cerrar sesión
-        </button>
-      </div>
+    <div className="min-h-screen bg-dots-pattern relative overflow-hidden">
+      <InteractiveBackground />
+      {/* Background Decor */}
+      <div className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -z-10 animate-float" />
 
-      <section className="mt-6">
-        <h2 className="text-xl font-bold">Mis anuncios</h2>
-        <div className="mt-3 grid gap-3">
-          {items.map((x) => (
-  <div key={x.id} className="border rounded p-3">
-    <Link href={`/listing/${x.id}`} className="block">
-      <b>{x.title}</b> — ${x.price}/mes
-      <div className="text-sm mt-1">
-        {x.verified_status === "verified" ? "✅ Verificado" : "⏳ No verificado"}
-      </div>
-    </Link>
+      <main className="container-custom py-10 relative z-10">
 
-    {/* BOTONES DE SERVICIOS */}
-    <div className="mt-3 flex flex-wrap gap-2">
-      <button
-        className="border px-3 py-1 rounded text-sm"
-        onClick={() => requestService(x.id, "verification")}
-      >
-        Solicitar verificación
-      </button>
+        {/* Admin Shortcut */}
+        {isAdmin && (
+          <div className="mb-6 bg-purple-900/10 border border-purple-500/20 p-4 rounded-xl flex justify-between items-center">
+            <span className="text-purple-700 dark:text-purple-300 font-medium flex items-center gap-2">🛡️ Tienes privilegios de Administrador</span>
+            <button onClick={() => router.push('/admin')} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 transition-colors">
+              Ir al Panel Admin
+            </button>
+          </div>
+        )}
 
-      <button
-        className="border px-3 py-1 rounded text-sm"
-        onClick={() => requestService(x.id, "featured")}
-      >
-        Solicitar destacado
-      </button>
-
-      <button
-        className="border px-3 py-1 rounded text-sm"
-        onClick={() => requestService(x.id, "posted_by_us")}
-      >
-        Publicación por nosotros
-      </button>
-    </div>
-  </div>
-))}
-
-          {items.length === 0 && (
-            <p>
-              No tienes anuncios aún.{" "}
-              <Link className="underline" href="/post">
-                Publica uno
-              </Link>
-              .
-            </p>
-          )}
-        </div>
-      </section>
-
-      <section className="mt-10">
-        <h2 className="text-xl font-bold">Mensajes recibidos</h2>
-        <div className="mt-3 grid gap-3">
-          {leads.map((l) => (
-            <div key={l.id} className="border rounded p-3">
-              <div className="text-sm text-gray-600">
-                Anuncio:{" "}
-                <Link className="underline" href={`/listing/${l.listing_id}`}>
-                  {titleById.get(l.listing_id) ?? l.listing_id}
-                </Link>
-              </div>
-              <div className="mt-2">
-                <b>{l.name ?? "Interesado"}</b>
-              </div>
-              <div className="mt-1 whitespace-pre-wrap">{l.message}</div>
-              <div className="mt-2 text-xs text-gray-500">
-                {new Date(l.created_at).toLocaleString()}
-              </div>
-            </div>
-          ))}
-          {leads.length === 0 && <p>No has recibido mensajes todavía.</p>}
-        </div>
-        
-      </section>
+        {(isLandlord || isAdmin) ? (
+          <LandlordDashboard user={{ ...user, ...profile }} />
+        ) : (
+          <TenantDashboard user={{ ...user, ...profile }} />
+        )}
+      </main>
     </div>
   );
 }
