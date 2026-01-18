@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useI18n } from "@/lib/i18n";
 
 type UserProfile = {
   id: string;
@@ -15,6 +16,7 @@ type UserProfile = {
 
 export default function NavBar() {
   const router = useRouter();
+  const { t } = useI18n();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -93,15 +95,15 @@ export default function NavBar() {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-6">
           <Link href="/search" className="text-sm font-medium hover:text-primary transition-colors">
-            Buscar
+            {t("nav.search")}
           </Link>
           <Link href="/map" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
-            <span className="text-xs">📍</span> Mapa
+            <span className="text-xs">📍</span> {t("nav.map")}
           </Link>
           <Link href="/post" className="text-sm font-medium hover:text-primary transition-colors">
-            Publicar
+            {t("nav.post")}
           </Link>
 
           <LanguageSwitcher />
