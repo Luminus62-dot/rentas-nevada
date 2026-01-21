@@ -81,9 +81,9 @@ export function LandlordDashboard({ user }: { user: any }) {
 
         if (!error) {
             setListings(prev => prev.map(l => l.id === listingId ? { ...l, verified_status: targetStatus as any } : l));
-            showToast(currentStatus === 'archived' ? "Propiedad reactivada" : "Propiedad marcada como rentada", "success");
+            showToast(currentStatus === 'archived' ? "Listing reactivated" : "Listing marked as rented", "success");
         } else {
-            showToast("Error al actualizar estado", "error");
+            showToast("Error updating status", "error");
         }
         setConfirmModal({ ...confirmModal, isOpen: false });
     }
@@ -94,12 +94,12 @@ export function LandlordDashboard({ user }: { user: any }) {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-                        Panel de Propietario
+                        Landlord dashboard
                     </h1>
-                    <p className="text-muted-foreground">Gestiona tus publicaciones y conecta con inquilinos.</p>
+                    <p className="text-muted-foreground">Manage your listings and connect with tenants.</p>
                 </div>
                 <Link href="/post" className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl font-medium shadow-lg hover:shadow-primary/25 hover:bg-primary/90 transition-all active:scale-95">
-                    + Publicar Propiedad
+                    + Post listing
                 </Link>
             </div>
 
@@ -109,31 +109,31 @@ export function LandlordDashboard({ user }: { user: any }) {
                     onClick={() => setActiveTab('overview')}
                     className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === 'overview' ? 'bg-primary/10 text-primary border-b-2 border-primary' : 'text-muted-foreground hover:bg-muted'}`}
                 >
-                    Resumen
+                    Overview
                 </button>
                 <button
                     onClick={() => setActiveTab('properties')}
                     className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === 'properties' ? 'bg-primary/10 text-primary border-b-2 border-primary' : 'text-muted-foreground hover:bg-muted'}`}
                 >
-                    Mis Propiedades ({listings.length})
+                    My listings ({listings.length})
                 </button>
                 <button
                     onClick={() => setActiveTab('reviews')}
                     className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === 'reviews' ? 'bg-primary/10 text-primary border-b-2 border-primary' : 'text-muted-foreground hover:bg-muted'}`}
                 >
-                    Reseñas ({reviews.length})
+                    Reviews ({reviews.length})
                 </button>
                 <button
                     onClick={() => setActiveTab('settings')}
                     className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === 'settings' ? 'bg-primary/10 text-primary border-b-2 border-primary' : 'text-muted-foreground hover:bg-muted'}`}
                 >
-                    Configuración
+                    Settings
                 </button>
                 <button
                     onClick={() => setActiveTab('messages')}
                     className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === 'messages' ? 'bg-primary/10 text-primary border-b-2 border-primary' : 'text-muted-foreground hover:bg-muted'}`}
                 >
-                    Mensajes 💬
+                    Messages 💬
                 </button>
             </div>
 
@@ -169,10 +169,10 @@ export function LandlordDashboard({ user }: { user: any }) {
                                         })}
                                         className={`px-3 py-1.5 text-sm border rounded-lg transition-colors ${l.verified_status === 'archived' ? 'bg-green-50 text-green-600 border-green-200 hover:bg-green-100' : 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100'}`}
                                     >
-                                        {l.verified_status === 'archived' ? '♻️ Reactivar' : '🚫 Marcar Rentada'}
+                                        {l.verified_status === 'archived' ? '♻️ Reactivate' : '🚫 Mark rented'}
                                     </button>
                                     <Link href={`/listing/${l.id}`} className="px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
-                                        Ver
+                                        View
                                     </Link>
                                 </div>
                             </div>
@@ -187,20 +187,20 @@ export function LandlordDashboard({ user }: { user: any }) {
             {activeTab === 'reviews' && (
                 <div className="space-y-6 animate-slide-up">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-xl font-bold">Reseñas de tus Propiedades</h2>
+                        <h2 className="text-xl font-bold">Reviews for your listings</h2>
                         <div className="flex items-center gap-2">
                             <span className="text-yellow-500 text-xl font-bold">
                                 {reviews.length > 0
                                     ? (reviews.reduce((acc, r) => acc + (r.property_rating + r.landlord_rating) / 2, 0) / reviews.length).toFixed(1)
                                     : "0"}
                             </span>
-                            <span className="text-sm text-muted-foreground">Calificación promedio</span>
+                            <span className="text-sm text-muted-foreground">Average rating</span>
                         </div>
                     </div>
 
                     {reviews.length === 0 ? (
                         <div className="p-8 text-center border-2 border-dashed border-border rounded-xl">
-                            <p className="text-muted-foreground">Aún no has recibido reseñas.</p>
+                            <p className="text-muted-foreground">You haven&apos;t received reviews yet.</p>
                         </div>
                     ) : (
                         <div className="grid gap-4">
@@ -212,8 +212,8 @@ export function LandlordDashboard({ user }: { user: any }) {
                                                 {rev.profiles?.full_name ? rev.profiles.full_name[0] : "?"}
                                             </div>
                                             <div>
-                                                <p className="font-bold">{rev.profiles?.full_name || "Usuario"}</p>
-                                                <p className="text-xs text-muted-foreground">en {rev.listings?.title}</p>
+                                                <p className="font-bold">{rev.profiles?.full_name || "User"}</p>
+                                                <p className="text-xs text-muted-foreground">on {rev.listings?.title}</p>
                                             </div>
                                         </div>
                                         <div className="text-right">
@@ -225,8 +225,8 @@ export function LandlordDashboard({ user }: { user: any }) {
                                     </div>
                                     <p className="text-sm text-foreground/80 leading-relaxed italic">"{rev.comment}"</p>
                                     <div className="mt-4 flex gap-4 text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
-                                        <span>Propiedad: {rev.property_rating}/5</span>
-                                        <span>Anfitrión: {rev.landlord_rating}/5</span>
+                                        <span>Property: {rev.property_rating}/5</span>
+                                        <span>Host: {rev.landlord_rating}/5</span>
                                     </div>
                                 </Card>
                             ))}
@@ -262,7 +262,7 @@ export function LandlordDashboard({ user }: { user: any }) {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-2">Número de WhatsApp (con código de país)</label>
+                                <label className="block text-sm font-medium mb-2">WhatsApp number (with country code)</label>
                                 <input
                                     type="text"
                                     placeholder="+52 123 456 7890"
@@ -270,7 +270,7 @@ export function LandlordDashboard({ user }: { user: any }) {
                                     value={profileForm.whatsapp}
                                     onChange={e => setProfileForm({ ...profileForm, whatsapp: e.target.value })}
                                 />
-                                <p className="text-[10px] text-muted-foreground mt-1">Este número se usará para que los interesados te contacten directamente.</p>
+                                <p className="text-[10px] text-muted-foreground mt-1">This number will be used so interested users can contact you directly.</p>
                             </div>
 
                             <button
@@ -299,7 +299,7 @@ export function LandlordDashboard({ user }: { user: any }) {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <Card className="p-4 bg-blue-50/50 border-blue-100 dark:bg-blue-900/10 dark:border-blue-900">
                             <div className="text-2xl font-bold text-blue-600">{listings.length}</div>
-                            <div className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Propiedades</div>
+                            <div className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Listings</div>
                         </Card>
                         <Card className="p-4 bg-green-50/50 border-green-100 dark:bg-green-900/10 dark:border-green-900">
                             <div className="text-2xl font-bold text-green-600">{listings.filter(l => l.verified_status === 'verified').length}</div>
@@ -311,7 +311,7 @@ export function LandlordDashboard({ user }: { user: any }) {
                         </Card>
                         <Card className="p-4 bg-orange-50/50 border-orange-100 dark:bg-orange-900/10 dark:border-orange-900">
                             <div className="text-2xl font-bold text-orange-600">0</div>
-                            <div className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Mensajes Nuevos</div>
+                            <div className="text-xs text-muted-foreground uppercase font-bold tracking-wider">New messages</div>
                         </Card>
                     </div>
 
@@ -319,7 +319,7 @@ export function LandlordDashboard({ user }: { user: any }) {
                         {/* My Listings Preview */}
                         <section>
                             <h2 className="text-lg font-bold mb-4 flex justify-between items-center">
-                                🏠 Mis Propiedades
+                                🏠 My listings
                                 <button onClick={() => setActiveTab('properties')} className="text-sm text-primary font-normal hover:underline">Ver todas</button>
                             </h2>
                             <div className="space-y-4">
@@ -344,7 +344,7 @@ export function LandlordDashboard({ user }: { user: any }) {
                         {/* Recent Leads Preview */}
                         <section>
                             <h2 className="text-lg font-bold mb-4 flex justify-between items-center">
-                                📩 Mensajes Recientes
+                                📩 Recent messages
                                 <button onClick={() => setActiveTab('messages')} className="text-sm text-primary font-normal hover:underline">Ver Inbox</button>
                             </h2>
                             <div className="space-y-3">
@@ -375,7 +375,7 @@ export function LandlordDashboard({ user }: { user: any }) {
                                                             setSelectedConvId(data.id);
                                                             setActiveTab('messages');
                                                         } else {
-                                                            showToast("No se pudo encontrar la conversación", "error");
+                                                            showToast("Conversation not found", "error");
                                                         }
                                                     }}
                                                     className="mt-2 text-[10px] font-bold text-primary flex items-center gap-1 hover:underline"
@@ -386,7 +386,7 @@ export function LandlordDashboard({ user }: { user: any }) {
                                         </div>
                                     </div>
                                 ))}
-                                {leads.length === 0 && <p className="text-muted-foreground text-sm italic">No tienes mensajes aún.</p>}
+                                {leads.length === 0 && <p className="text-muted-foreground text-sm italic">You don&apos;t have messages yet.</p>}
                             </div>
                         </section>
                     </div>
@@ -395,11 +395,11 @@ export function LandlordDashboard({ user }: { user: any }) {
 
             <ConfirmModal
                 isOpen={confirmModal.isOpen}
-                title={confirmModal.currentStatus === 'archived' ? "¿Reactivar Propiedad?" : "¿Marcar como Rentada?"}
+                title={confirmModal.currentStatus === 'archived' ? "Reactivate listing?" : "Mark as rented?"}
                 message={confirmModal.currentStatus === 'archived'
-                    ? "Esta propiedad aparecerá nuevamente en los resultados de búsqueda."
-                    : "Esta propiedad ya no recibirá nuevos mensajes de interesados."}
-                confirmText={confirmModal.currentStatus === 'archived' ? "Confirmar" : "Sí, marcar como rentada"}
+                    ? "This listing will appear again in search results."
+                    : "This listing will no longer receive new messages from interested users."}
+                confirmText={confirmModal.currentStatus === 'archived' ? "Confirm" : "Yes, mark as rented"}
                 variant={confirmModal.currentStatus === 'archived' ? 'primary' : 'danger'}
                 onConfirm={() => toggleStatus(confirmModal.listingId, confirmModal.currentStatus)}
                 onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}

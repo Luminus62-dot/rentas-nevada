@@ -9,7 +9,7 @@ export default function LanguageSwitcher() {
         <button
             onClick={() => setLanguage(language === "es" ? "en" : "es")}
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-muted transition-colors text-sm font-medium"
-            title={language === "es" ? "Switch to English" : "Cambiar a Español"}
+            title={language === "es" ? "Switch to English" : "Switch to Spanish"}
         >
             <span className="text-lg">{language === "es" ? "🇺🇸" : "🇲🇽"}</span>
             <span className="hidden sm:inline">{language === "es" ? "EN" : "ES"}</span>

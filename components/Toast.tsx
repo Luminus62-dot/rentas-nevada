@@ -10,7 +10,7 @@ export type Toast = {
   type: ToastType;
 };
 
-// Hook simple para usar toasts
+// Simple hook to use toasts
 export function useToast() {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
@@ -20,7 +20,7 @@ export function useToast() {
     
     setToasts((prev) => [...prev, newToast]);
 
-    // Auto-remover después de 4 segundos
+    // Auto-remove after 4 seconds
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 4000);
@@ -37,7 +37,7 @@ export function useToast() {
   };
 }
 
-// Componente para mostrar los toasts
+// Component to display toasts
 export function ToastContainer({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: string) => void }) {
   if (toasts.length === 0) return null;
 
@@ -67,7 +67,7 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
       <button
         onClick={onClose}
         className="text-gray-500 hover:text-gray-700 flex-shrink-0 transition-colors"
-        aria-label="Cerrar notificación"
+        aria-label="Dismiss notification"
       >
         <svg
           className="w-5 h-5"

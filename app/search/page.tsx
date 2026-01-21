@@ -9,6 +9,7 @@ import { getErrorMessage } from "@/lib/errorHandler";
 import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
 import { useToast } from "@/components/ToastContext";
+import { useI18n } from "@/lib/i18n";
 
 function SearchPageContent() {
   const searchParams = useSearchParams();
@@ -17,6 +18,7 @@ function SearchPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [session, setSession] = useState<any>(null);
   const { showToast } = useToast();
+  const { t } = useI18n();
 
   // Filters
   const [city, setCity] = useState(searchParams.get("city") || "");
@@ -75,7 +77,7 @@ function SearchPageContent() {
 
   async function saveAlert() {
     if (!session) {
-      showToast("Inicia sesión para guardar esta búsqueda.", "error");
+      showToast(t("search.signInToSave"), "error");
       return;
     }
 
@@ -85,9 +87,9 @@ function SearchPageContent() {
     });
 
     if (error) {
-      showToast("Error al guardar alerta", "error");
+      showToast(t("search.saveError"), "error");
     } else {
-      showToast("¡Alerta guardada! Te notificaremos de nuevos anuncios.", "success");
+      showToast(t("search.saveSuccess"), "success");
     }
   }
 
@@ -107,13 +109,13 @@ function SearchPageContent() {
     return (
       <div className="container-custom py-10 flex justify-center">
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-6 rounded-lg text-center max-w-md">
-          <p className="font-bold text-red-700 dark:text-red-400">Error al cargar anuncios</p>
+          <p className="font-bold text-red-700 dark:text-red-400">{t("search.errorTitle")}</p>
           <p className="text-sm mt-2 text-muted-foreground">{error}</p>
           <button
             onClick={() => window.location.reload()}
             className="mt-4 px-4 py-2 bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 rounded hover:bg-red-200 transition-colors text-sm font-medium"
           >
-            Reintentar
+            {t("search.retry")}
           </button>
         </div>
       </div>
@@ -124,17 +126,17 @@ function SearchPageContent() {
     <div className="container-custom py-8">
       <div className="mb-8 space-y-4">
         <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight">Explora Propiedades</h1>
-          <p className="text-muted-foreground">Encuentra tu próximo hogar en Las Vegas y alrededores.</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t("search.title")}</h1>
+          <p className="text-muted-foreground">{t("search.subtitle")}</p>
         </div>
 
         {/* Filters Bar */}
         <div className="bg-card/50 p-4 rounded-xl border border-border flex flex-wrap gap-4 items-end justify-center backdrop-blur-sm">
           <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-bold text-muted-foreground ml-1">CIUDAD</span>
+            <span className="text-xs font-bold text-muted-foreground ml-1">{t("search.city").toUpperCase()}</span>
             <input
               type="text"
-              placeholder="Ej: Las Vegas"
+              placeholder={t("search.cityPlaceholder")}
               className="bg-background border border-border rounded-lg px-3 py-2 text-sm w-40 focus:ring-2 focus:ring-primary/20 outline-none"
               value={city}
               onChange={(e) => setCity(e.target.value)}
@@ -142,24 +144,24 @@ function SearchPageContent() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-bold text-muted-foreground ml-1">TIPO</span>
+            <span className="text-xs font-bold text-muted-foreground ml-1">{t("search.type").toUpperCase()}</span>
             <select
               className="bg-background border border-border rounded-lg px-3 py-2 text-sm w-40 focus:ring-2 focus:ring-primary/20 outline-none"
               value={type}
               onChange={(e) => setType(e.target.value)}
             >
-              <option value="all">Todos</option>
-              <option value="room">Habitación</option>
-              <option value="apartment">Apartamento</option>
-              <option value="house">Casa</option>
+              <option value="all">{t("property.all")}</option>
+              <option value="room">{t("property.room")}</option>
+              <option value="apartment">{t("property.apartment")}</option>
+              <option value="house">{t("property.house")}</option>
             </select>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-bold text-muted-foreground ml-1">PRECIO MAX</span>
+            <span className="text-xs font-bold text-muted-foreground ml-1">{t("search.maxPrice").toUpperCase()}</span>
             <input
               type="number"
-              placeholder="Ej: 2000"
+              placeholder={t("search.maxPricePlaceholder")}
               className="bg-background border border-border rounded-lg px-3 py-2 text-sm w-32 focus:ring-2 focus:ring-primary/20 outline-none"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
@@ -170,7 +172,7 @@ function SearchPageContent() {
             onClick={saveAlert}
             className="bg-primary/10 text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 border border-primary/20"
           >
-            🔔 Guardar Búsqueda
+            🔔 {t("search.saveSearch")}
           </button>
         </div>
 
@@ -181,28 +183,28 @@ function SearchPageContent() {
             className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border ${petFriendly ? "bg-primary text-white border-primary" : "bg-card text-muted-foreground border-border hover:border-primary/50"
               }`}
           >
-            🐾 Pet-friendly
+            🐾 {t("search.petFriendly")}
           </button>
           <button
             onClick={() => setParking(!parking)}
             className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border ${parking ? "bg-primary text-white border-primary" : "bg-card text-muted-foreground border-border hover:border-primary/50"
               }`}
           >
-            🚗 Estacionamiento
+            🚗 {t("search.parking")}
           </button>
           <button
             onClick={() => setWasherDryer(!washerDryer)}
             className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border ${washerDryer ? "bg-primary text-white border-primary" : "bg-card text-muted-foreground border-border hover:border-primary/50"
               }`}
           >
-            🧺 Lavadora/Secadora
+            🧺 {t("search.washerDryer")}
           </button>
           <button
             onClick={() => setInternet(!internet)}
             className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border ${internet ? "bg-primary text-white border-primary" : "bg-card text-muted-foreground border-border hover:border-primary/50"
               }`}
           >
-            🌐 Internet Incluido
+            🌐 {t("search.internet")}
           </button>
         </div>
       </div>
@@ -231,12 +233,12 @@ function SearchPageContent() {
                 <div className="flex justify-between items-start mb-2">
                   <h2 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors line-clamp-1">{item.title}</h2>
                   <Badge variant={item.verified_status === "verified" ? "success" : "default"} className="ml-2 shrink-0">
-                    {item.verified_status === "verified" ? "Verificado" : "N/Verificado"}
+                    {item.verified_status === "verified" ? t("search.verified") : t("search.unverified")}
                   </Badge>
                 </div>
 
                 <div className="text-2xl font-bold mb-1 text-primary">
-                  ${item.price} <span className="text-sm font-normal text-muted-foreground">/ mes</span>
+                  ${item.price} <span className="text-sm font-normal text-muted-foreground">{t("search.perMonth")}</span>
                 </div>
 
                 <div className="flex items-center text-sm text-muted-foreground mb-4">
@@ -244,11 +246,11 @@ function SearchPageContent() {
                 </div>
 
                 <div className="mt-auto flex gap-2 pt-4 border-t border-border/50 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  <span>{item.type === 'room' ? 'Habitación' : item.type === 'apartment' ? 'Apartamento' : 'Casa'}</span>
+                  <span>{item.type === 'room' ? t("property.room") : item.type === 'apartment' ? t("property.apartment") : t("property.house")}</span>
                   {item.furnished && (
                     <>
                       <span>•</span>
-                      <span>Amueblado</span>
+                      <span>{t("search.furnished")}</span>
                     </>
                   )}
                 </div>
@@ -259,8 +261,8 @@ function SearchPageContent() {
 
         {items.length === 0 && (
           <div className="col-span-full py-20 text-center">
-            <p className="text-xl text-muted-foreground">No hay anuncios disponibles en este momento.</p>
-            <Link href="/post" className="text-primary hover:underline mt-2 inline-block">¡Sé el primero en publicar!</Link>
+            <p className="text-xl text-muted-foreground">{t("search.noResults")}</p>
+            <Link href="/post" className="text-primary hover:underline mt-2 inline-block">{t("search.beFirst")}</Link>
           </div>
         )}
       </div>
@@ -269,8 +271,10 @@ function SearchPageContent() {
 }
 
 export default function SearchPage() {
+  const { t } = useI18n();
+
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-pulse text-primary">Cargando búsqueda...</div></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-pulse text-primary">{t("search.loading")}</div></div>}>
       <SearchPageContent />
     </Suspense>
   );

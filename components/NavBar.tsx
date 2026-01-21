@@ -151,7 +151,7 @@ export default function NavBar() {
                       onClick={handleLogout}
                       className="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-muted transition-colors"
                     >
-                      Cerrar Sesión
+                      {t("nav.logout")}
                     </button>
                   </div>
                 </>
@@ -162,7 +162,7 @@ export default function NavBar() {
               href="/login"
               className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:opacity-90 transition-opacity shadow-sm"
             >
-              Iniciar Sesión
+              {t("nav.login")}
             </Link>
           )}
         </div>
@@ -191,7 +191,7 @@ export default function NavBar() {
               className="px-4 py-2 hover:bg-muted rounded-lg transition-colors flex items-center justify-between"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              <span>Buscar Rentas</span>
+              <span>{t("nav.search")}</span>
               <span>🔍</span>
             </Link>
             <Link
@@ -199,7 +199,7 @@ export default function NavBar() {
               className="px-4 py-2 hover:bg-muted rounded-lg transition-colors flex items-center justify-between"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              <span>Mapa Interactivo</span>
+              <span>{t("map.title")}</span>
               <span>📍</span>
             </Link>
             <Link
@@ -207,14 +207,14 @@ export default function NavBar() {
               className="px-4 py-2 hover:bg-muted rounded-lg transition-colors flex items-center justify-between"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              <span>Publicar</span>
+              <span>{t("nav.post")}</span>
               <span>➕</span>
             </Link>
             <div className="h-px bg-border my-1"></div>
             {user ? (
               <>
                 <div className="px-4 py-2 font-medium text-sm text-muted-foreground">
-                  Hola, {displayName}
+                  Hello, {displayName}
                 </div>
                 <Link
                   href="/dashboard"
@@ -239,7 +239,7 @@ export default function NavBar() {
                   }}
                   className="text-left px-4 py-2 text-red-500 hover:bg-muted rounded-lg transition-colors"
                 >
-                  Cerrar Sesión
+                  {t("nav.logout")}
                 </button>
               </>
             ) : (
@@ -248,7 +248,7 @@ export default function NavBar() {
                 className="text-center bg-primary text-primary-foreground px-4 py-2 rounded-lg"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Iniciar Sesión
+                {t("nav.login")}
               </Link>
             )}
           </div>

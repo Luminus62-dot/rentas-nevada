@@ -39,7 +39,7 @@ export default function RootLayout({
   const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
   return (
-    <html lang="es">
+    <html lang="en">
       <head>
         <link rel="dns-prefetch" href="https://idvyhvvimtlxgkgiitmk.supabase.co" />
         <link rel="preconnect" href="https://idvyhvvimtlxgkgiitmk.supabase.co" />

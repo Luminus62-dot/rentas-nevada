@@ -33,7 +33,7 @@ export default function RegisterPage() {
     setFullNameError(null);
 
     // Validate
-    const fullNameValidation = validateRequired(fullName, "El nombre") || validateMinLength(fullName, 2, "El nombre");
+    const fullNameValidation = validateRequired(fullName, "Name") || validateMinLength(fullName, 2, "Name");
     const emailValidation = validateEmail(email);
     const passwordValidation = validatePassword(password);
 
@@ -62,7 +62,7 @@ export default function RegisterPage() {
         });
 
         if (profileError) {
-          setError(`Cuenta creada, pero error en perfil: ${getErrorMessage(profileError)}`);
+          setError(`Account created, but profile error: ${getErrorMessage(profileError)}`);
           setLoading(false);
           return;
         }
@@ -92,31 +92,31 @@ export default function RegisterPage() {
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-4 text-2xl">
             ✨
           </div>
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">Crear Cuenta</h1>
-          <p className="text-muted-foreground mt-2">Únete a la comunidad de Stay Nevada</p>
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">Create Account</h1>
+          <p className="text-muted-foreground mt-2">Join the Stay Nevada community</p>
         </div>
 
         <form onSubmit={onSubmit} className="space-y-6">
 
           {/* User Type Selection */}
           <div className="space-y-3">
-            <label className="block text-sm font-medium text-foreground/80 ml-1">¿Cómo planeas usar la plataforma?</label>
+            <label className="block text-sm font-medium text-foreground/80 ml-1">How do you plan to use the platform?</label>
             <div className="grid grid-cols-2 gap-4">
               <button
                 type="button"
                 onClick={() => setRole("tenant")}
                 className={`p-3 rounded-xl border text-sm font-medium transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${role === "tenant" ? "border-primary bg-primary/5 text-primary ring-1 ring-primary shadow-sm" : "border-border hover:bg-muted/50 text-muted-foreground"}`}
               >
-                👤 Busco Rentar
-                <span className="block text-xs font-normal mt-1 opacity-70">Usuario Regular</span>
+                👤 I&apos;m looking to rent
+                <span className="block text-xs font-normal mt-1 opacity-70">Regular user</span>
               </button>
               <button
                 type="button"
                 onClick={() => setRole("landlord")}
                 className={`p-3 rounded-xl border text-sm font-medium transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${role === "landlord" ? "border-primary bg-primary/5 text-primary ring-1 ring-primary shadow-sm" : "border-border hover:bg-muted/50 text-muted-foreground"}`}
               >
-                🏠 Quiero Publicar
-                <span className="block text-xs font-normal mt-1 opacity-70">Publicante</span>
+                🏠 I want to post
+                <span className="block text-xs font-normal mt-1 opacity-70">Landlord</span>
               </button>
             </div>
           </div>
@@ -127,7 +127,7 @@ export default function RegisterPage() {
               <input
                 className={inputClass(fullNameError)}
                 type="text"
-                placeholder="Nombre completo"
+                placeholder="Full name"
                 value={fullName}
                 onChange={(e) => {
                   setFullName(e.target.value);
@@ -142,7 +142,7 @@ export default function RegisterPage() {
               <input
                 className={inputClass(emailError)}
                 type="email"
-                placeholder="Correo electrónico"
+                placeholder="Email address"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
@@ -157,7 +157,7 @@ export default function RegisterPage() {
               <input
                 className={inputClass(passwordError)}
                 type="password"
-                placeholder="Contraseña"
+                placeholder="Password"
                 value={password}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -168,28 +168,28 @@ export default function RegisterPage() {
 
               {/* Password Requirements Checklist */}
               <div className="mt-3 space-y-2 bg-muted/40 p-3 rounded-xl border border-border/50 backdrop-blur-sm">
-                <p className="text-xs font-semibold text-muted-foreground">Requisitos de seguridad:</p>
+                <p className="text-xs font-semibold text-muted-foreground">Security requirements:</p>
 
                 <div className="grid grid-cols-1 gap-1">
                   <div className={`flex items-center gap-2 text-xs transition-colors duration-300 ${password.length >= 6 ? "text-green-600 dark:text-green-400 font-medium" : "text-muted-foreground"}`}>
                     <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] border transition-colors duration-300 ${password.length >= 6 ? "bg-green-100 border-green-200 dark:bg-green-900/30 dark:border-green-800" : "border-muted-foreground/30 bg-background/50"}`}>
                       {password.length >= 6 && "✓"}
                     </span>
-                    Mínimo 6 caracteres
+                    Minimum 6 characters
                   </div>
 
                   <div className={`flex items-center gap-2 text-xs transition-colors duration-300 ${/[A-Z]/.test(password) ? "text-green-600 dark:text-green-400 font-medium" : "text-muted-foreground"}`}>
                     <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] border transition-colors duration-300 ${/[A-Z]/.test(password) ? "bg-green-100 border-green-200 dark:bg-green-900/30 dark:border-green-800" : "border-muted-foreground/30 bg-background/50"}`}>
                       {/[A-Z]/.test(password) && "✓"}
                     </span>
-                    Una letra mayúscula
+                    One uppercase letter
                   </div>
 
                   <div className={`flex items-center gap-2 text-xs transition-colors duration-300 ${/[0-9]/.test(password) ? "text-green-600 dark:text-green-400 font-medium" : "text-muted-foreground"}`}>
                     <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] border transition-colors duration-300 ${/[0-9]/.test(password) ? "bg-green-100 border-green-200 dark:bg-green-900/30 dark:border-green-800" : "border-muted-foreground/30 bg-background/50"}`}>
                       {/[0-9]/.test(password) && "✓"}
                     </span>
-                    Un número
+                    One number
                   </div>
                 </div>
               </div>
@@ -214,13 +214,13 @@ export default function RegisterPage() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Registrando...
+                Creating account...
               </span>
-            ) : "Crear Cuenta"}
+            ) : "Create account"}
           </button>
 
           <p className="text-center text-sm text-muted-foreground mt-4">
-            ¿Ya tienes cuenta? <Link href="/login" className="text-primary font-semibold hover:text-primary/80 transition-colors hover:underline">Inicia Sesión</Link>
+            Already have an account? <Link href="/login" className="text-primary font-semibold hover:text-primary/80 transition-colors hover:underline">Sign in</Link>
           </p>
 
         </form>

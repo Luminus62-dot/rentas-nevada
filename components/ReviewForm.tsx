@@ -23,14 +23,14 @@ export function ReviewForm({ listingId, onSuccess }: ReviewFormProps) {
         setError(null);
 
         if (propertyRating === 0 || landlordRating === 0) {
-            setError("Por favor califica ambas categorías.");
+            setError("Please rate both categories.");
             setLoading(false);
             return;
         }
 
         try {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) throw new Error("Debes iniciar sesión.");
+            if (!user) throw new Error("You must be signed in.");
 
             const { error: insertError } = await supabase.from("reviews").insert({
                 listing_id: listingId,
@@ -42,7 +42,7 @@ export function ReviewForm({ listingId, onSuccess }: ReviewFormProps) {
 
             if (insertError) {
                 if (insertError.message.includes("policy")) {
-                    throw new Error("Solo puedes dejar reseña si has contactado al propietario antes.");
+                    throw new Error("You can only leave a review if you contacted the owner first.");
                 }
                 throw insertError;
             }
@@ -51,10 +51,10 @@ export function ReviewForm({ listingId, onSuccess }: ReviewFormProps) {
             setPropertyRating(0);
             setLandlordRating(0);
             if (onSuccess) onSuccess();
-            alert("¡Reseña enviada! Gracias por tu opinión.");
+            alert("Review submitted! Thanks for your feedback.");
 
         } catch (err: any) {
-            setError(err.message || "Error al enviar reseña.");
+            setError(err.message || "Error submitting review.");
         } finally {
             setLoading(false);
         }
@@ -62,26 +62,26 @@ export function ReviewForm({ listingId, onSuccess }: ReviewFormProps) {
 
     return (
         <Card className="glass p-6 mt-8 border-primary/20">
-            <h3 className="text-xl font-bold mb-4">Escribe una Reseña</h3>
+            <h3 className="text-xl font-bold mb-4">Write a review</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="block text-sm font-medium mb-1">Calificación de la Propiedad</label>
+                    <label className="block text-sm font-medium mb-1">Property rating</label>
                     <StarRating rating={propertyRating} onChange={setPropertyRating} size="lg" />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium mb-1">Calificación del Propietario (Trato/Respuesta)</label>
+                    <label className="block text-sm font-medium mb-1">Landlord rating (communication/response)</label>
                     <StarRating rating={landlordRating} onChange={setLandlordRating} size="lg" />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium mb-1">Comentario (Opcional)</label>
+                    <label className="block text-sm font-medium mb-1">Comment (optional)</label>
                     <textarea
                         className="w-full p-3 rounded-lg bg-background/50 border border-border focus:ring-2 focus:ring-primary/50 outline-none resize-none"
                         rows={3}
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
-                        placeholder="¿Qué tal tu experiencia? ¿La propiedad es como las fotos?"
+                        placeholder="How was your experience? Was the property like the photos?"
                     />
                 </div>
 
@@ -92,7 +92,7 @@ export function ReviewForm({ listingId, onSuccess }: ReviewFormProps) {
                     disabled={loading}
                     className="px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
                 >
-                    {loading ? "Enviando..." : "Publicar Reseña"}
+                    {loading ? "Submitting..." : "Post review"}
                 </button>
             </form>
         </Card>

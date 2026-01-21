@@ -20,10 +20,10 @@ export function AmenitiesSelector({ selectedAmenities, onChange }: AmenitiesSele
         <div className="space-y-8">
             <div className="border-b border-border/50 pb-4">
                 <h2 className="text-xl font-bold flex items-center gap-2">
-                    ✨ Amenidades y Servicios
+                    ✨ Amenities & Services
                 </h2>
                 <p className="text-sm text-muted-foreground mt-1">
-                    Selecciona todas las características que ofrece tu propiedad para ayudar a los inquilinos a encontrarte.
+                    Select every feature your property offers to help tenants find you.
                 </p>
             </div>
 

@@ -1,13 +1,13 @@
 /**
- * Utilidades para manejo consistente de errores
+ * Utilities for consistent error handling
  */
 
 /**
- * Convierte errores de Supabase en mensajes amigables para el usuario
+ * Converts Supabase errors into user-friendly messages
  */
 export function getErrorMessage(error: unknown): string {
   if (!error) {
-    return "Ocurrió un error desconocido";
+    return "An unknown error occurred";
   }
 
   // Si es un string, devolverlo directamente
@@ -19,41 +19,41 @@ export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) {
     const message = error.message;
 
-    // Mensajes amigables para errores comunes de Supabase
+    // Friendly messages for common Supabase errors
     if (message.includes("Invalid login credentials")) {
-      return "Email o contraseña incorrectos";
+      return "Incorrect email or password";
     }
 
     if (message.includes("User already registered")) {
-      return "Este email ya está registrado";
+      return "This email is already registered";
     }
 
     if (message.includes("Email rate limit exceeded")) {
-      return "Demasiados intentos. Por favor espera unos minutos";
+      return "Too many attempts. Please wait a few minutes";
     }
 
     if (message.includes("Password should be at least")) {
-      return "La contraseña debe tener al menos 6 caracteres";
+      return "Password must be at least 6 characters";
     }
 
     if (message.includes("duplicate key value")) {
-      return "Este registro ya existe";
+      return "This record already exists";
     }
 
     if (message.includes("violates foreign key constraint")) {
-      return "Error de referencia: el registro relacionado no existe";
+      return "Reference error: related record does not exist";
     }
 
     if (message.includes("violates not-null constraint")) {
-      return "Faltan campos requeridos";
+      return "Missing required fields";
     }
 
     if (message.includes("JWT")) {
-      return "Sesión expirada. Por favor inicia sesión nuevamente";
+      return "Session expired. Please sign in again";
     }
 
     if (message.includes("network") || message.includes("fetch")) {
-      return "Error de conexión. Por favor verifica tu internet e intenta nuevamente";
+      return "Connection error. Please check your internet and try again";
     }
 
     // Si no hay un mensaje amigable, devolver el mensaje original
@@ -65,11 +65,11 @@ export function getErrorMessage(error: unknown): string {
     return getErrorMessage((error as { message: unknown }).message);
   }
 
-  return "Ocurrió un error inesperado";
+  return "An unexpected error occurred";
 }
 
 /**
- * Maneja errores de operaciones async de forma segura
+ * Safely handles async operation errors
  */
 export async function handleAsyncError<T>(
   operation: () => Promise<T>,
@@ -82,14 +82,14 @@ export async function handleAsyncError<T>(
     if (onError) {
       onError(errorMessage);
     } else {
-      console.error("Error no manejado:", errorMessage, error);
+      console.error("Unhandled error:", errorMessage, error);
     }
     return null;
   }
 }
 
 /**
- * Verifica si un error es un error de Supabase
+ * Checks if an error is a Supabase error
  */
 export function isSupabaseError(error: unknown): boolean {
   if (!error || typeof error !== "object") {
@@ -100,7 +100,7 @@ export function isSupabaseError(error: unknown): boolean {
 }
 
 /**
- * Obtiene el código de error de Supabase si existe
+ * Gets the Supabase error code if present
  */
 export function getErrorCode(error: unknown): string | null {
   if (isSupabaseError(error)) {

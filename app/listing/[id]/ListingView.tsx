@@ -12,14 +12,21 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { Listing } from "@/lib/types";
 import { AmenitiesDisplay } from "@/components/AmenitiesDisplay";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { useI18n } from "@/lib/i18n";
 import dynamic from "next/dynamic";
+
+function MapLoadingFallback() {
+    const { t } = useI18n();
+    return <div className="h-48 bg-muted animate-pulse rounded-xl flex items-center justify-center">{t("map.loading")}</div>;
+}
 
 const LeafletMap = dynamic(() => import("@/components/LeafletMap"), {
     ssr: false,
-    loading: () => <div className="h-48 bg-muted animate-pulse rounded-xl flex items-center justify-center">Cargando mapa...</div>
+    loading: () => <MapLoadingFallback />
 });
 
 export default function ListingView({ listingId }: { listingId: string }) {
+    const { t } = useI18n();
     const [listing, setListing] = useState<Listing | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -138,11 +145,11 @@ export default function ListingView({ listingId }: { listingId: string }) {
             });
 
             if (error) throw error;
-            alert("Reporte enviado exitosamente. Gracias por ayudarnos a mantener la comunidad segura.");
+            alert(t("listing.reportSuccess"));
             setShowReportModal(false);
             setReportReason("");
         } catch (err: any) {
-            alert("Error al enviar reporte: " + err.message);
+            alert(`${t("listing.reportError")} ${err.message}`);
         } finally {
             setReporting(false);
         }
@@ -152,7 +159,7 @@ export default function ListingView({ listingId }: { listingId: string }) {
         <div className="min-h-screen flex items-center justify-center bg-dots-pattern">
             <div className="animate-pulse flex flex-col items-center">
                 <div className="w-12 h-12 bg-primary/20 rounded-full mb-4"></div>
-                <div className="text-primary font-medium">Cargando propiedad...</div>
+                <div className="text-primary font-medium">{t("listing.loadingProperty")}</div>
             </div>
         </div>
     );
@@ -160,9 +167,9 @@ export default function ListingView({ listingId }: { listingId: string }) {
     if (error || !listing) return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-dots-pattern">
             <h1 className="text-2xl font-bold mb-4 text-red-500">Error</h1>
-            <p className="mb-6 text-muted-foreground">{error || "Propiedad no encontrada"}</p>
+            <p className="mb-6 text-muted-foreground">{error || t("listing.notFound")}</p>
             <Link href="/search" className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90">
-                Volver al buscador
+                {t("listing.backToSearch")}
             </Link>
         </div>
     );
@@ -179,35 +186,35 @@ export default function ListingView({ listingId }: { listingId: string }) {
             <main className="container-custom py-10 flex-grow relative z-10 w-full">
                 {/* Breadcrumb & Title */}
                 <div className="mb-8 animate-slide-up">
-                    <Link href="/search" className="text-sm text-muted-foreground hover:text-primary mb-4 inline-block">← Volver a resultados</Link>
+                    <Link href="/search" className="text-sm text-muted-foreground hover:text-primary mb-4 inline-block">← {t("listing.backToResults")}</Link>
 
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
                             <div className="flex items-center gap-3 mb-2">
                                 <Badge variant={listing.type === 'house' ? 'default' : listing.type === 'apartment' ? 'success' : 'warning'}>
-                                    {listing.type === 'house' ? 'Casa' : listing.type === 'apartment' ? 'Departamento' : 'Cuarto'}
+                                    {listing.type === 'house' ? t("property.house") : listing.type === 'apartment' ? t("property.apartment") : t("property.room")}
                                 </Badge>
                                 {listing.verified_status === 'verified' && (
                                     <Badge variant="verified">
-                                        <span className="flex items-center gap-1">🛡️ Verificado</span>
+                                        <span className="flex items-center gap-1">🛡️ {t("listing.verified")}</span>
                                     </Badge>
                                 )}
-                                {listing.is_featured && <Badge variant="warning">Destacado</Badge>}
-                                {listing.verified_status === 'archived' && <Badge variant="danger">Archivado</Badge>}
+                                {listing.is_featured && <Badge variant="warning">{t("listing.featured")}</Badge>}
+                                {listing.verified_status === 'archived' && <Badge variant="danger">{t("listing.archived")}</Badge>}
                             </div>
                             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">{listing.title}</h1>
                             <p className="text-muted-foreground flex items-center gap-2 mb-2">
-                                📍 {listing.neighborhood || listing.area || listing.city || "Ubicación no especificada"}
+                                📍 {listing.neighborhood || listing.area || listing.city || t("listing.locationMissing")}
                                 {(listing.neighborhood || listing.area) && listing.city && <span className="text-xs opacity-50">• {listing.city}</span>}
                             </p>
 
                             {/* Owner Info */}
                             {listing.profiles && (
                                 <div className="flex items-center gap-2 mb-3 text-sm">
-                                    <span className="text-muted-foreground">Publicado por:</span>
+                                    <span className="text-muted-foreground">{t("listing.publishedBy")}:</span>
                                     <Link href={`/profile/${listing.owner_id}`} className="font-medium text-primary hover:underline flex items-center gap-1">
-                                        {listing.profiles.full_name || "Propietario"}
-                                        {listing.profiles.is_verified && <span className="text-green-500" title="Verificado">✓</span>}
+                                        {listing.profiles.full_name || t("listing.host")}
+                                        {listing.profiles.is_verified && <span className="text-green-500" title={t("listing.verified")}>✓</span>}
                                     </Link>
                                 </div>
                             )}
@@ -216,19 +223,19 @@ export default function ListingView({ listingId }: { listingId: string }) {
                             {reviews.length > 0 && (
                                 <div className="flex items-center gap-4 mt-3 text-sm">
                                     <div className="flex items-center gap-1 bg-yellow-50 dark:bg-yellow-900/20 px-2 py-1 rounded-md text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800">
-                                        <span>★ {avgProperty} Propiedad</span>
+                                        <span>★ {avgProperty} {t("listing.propertyLabel")}</span>
                                     </div>
                                     <div className="flex items-center gap-1 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-md text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
-                                        <span>👤 {avgLandlord} Anfitrión</span>
+                                        <span>👤 {avgLandlord} {t("listing.host")}</span>
                                     </div>
-                                    <span className="text-muted-foreground underline">{reviews.length} opiniones</span>
+                                    <span className="text-muted-foreground underline">{reviews.length} {t("listing.reviewsCount")}</span>
                                 </div>
                             )}
                         </div>
 
                         <div className="text-right flex flex-col items-end gap-2">
-                            <div className="text-3xl font-bold text-primary">${listing.price.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">/mes</span></div>
-                            {listing.deposit && <div className="text-sm text-muted-foreground">Depósito: ${listing.deposit.toLocaleString()}</div>}
+                            <div className="text-3xl font-bold text-primary">${listing.price.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">{t("search.perMonth")}</span></div>
+                            {listing.deposit && <div className="text-sm text-muted-foreground">{t("listing.deposit")}: ${listing.deposit.toLocaleString()}</div>}
 
                             {/* Actions */}
                             <div className="mt-2 flex items-center gap-3">
@@ -245,14 +252,14 @@ export default function ListingView({ listingId }: { listingId: string }) {
                                         }}
                                         className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${isFavorite ? 'bg-red-50 text-red-500 border border-red-200' : 'bg-background border border-border hover:bg-muted'}`}
                                     >
-                                        {isFavorite ? '❤️ Guardado' : '🤍 Guardar'}
+                                        {isFavorite ? `❤️ ${t("listing.saved")}` : `🤍 ${t("listing.save")}`}
                                     </button>
                                 )}
 
                                 <button
-                                    onClick={() => session ? setShowReportModal(true) : alert("Inicia sesión para reportar un anuncio.")}
+                                    onClick={() => session ? setShowReportModal(true) : alert(t("listing.reportSignIn"))}
                                     className="p-2 text-muted-foreground hover:text-red-500 transition-colors"
-                                    title="Reportar Anuncio"
+                                    title={t("listing.report")}
                                 >
                                     🚩
                                 </button>
@@ -272,7 +279,7 @@ export default function ListingView({ listingId }: { listingId: string }) {
                                     <>
                                         {isImageLoading && (
                                             <div className="absolute inset-0 bg-muted animate-pulse flex items-center justify-center">
-                                                <span className="text-muted-foreground text-sm">Cargando imagen...</span>
+                                                <span className="text-muted-foreground text-sm">{t("listing.loadingImage")}</span>
                                             </div>
                                         )}
                                         <Image
@@ -339,22 +346,22 @@ export default function ListingView({ listingId }: { listingId: string }) {
 
                         {/* Description */}
                         <div className="glass p-6 rounded-2xl relative overflow-hidden">
-                            <h2 className="text-xl font-bold mb-4">Descripción</h2>
+                            <h2 className="text-xl font-bold mb-4">{t("listing.description")}</h2>
                             <p className="text-foreground/80 leading-relaxed whitespace-pre-line">
-                                {listing.description || "Sin descripción detallada."}
+                                {listing.description || t("listing.noDescription")}
                             </p>
 
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-8 pt-8 border-t border-border/50">
                                 <div className="flex flex-col">
-                                    <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Disponible</span>
-                                    <span className="font-medium">{listing.available_from ? new Date(listing.available_from).toLocaleDateString() : 'Inmediata'}</span>
+                                    <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{t("listing.available")}</span>
+                                    <span className="font-medium">{listing.available_from ? new Date(listing.available_from).toLocaleDateString() : t("listing.availableNow")}</span>
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Amueblado</span>
-                                    <span className="font-medium">{listing.furnished ? "Sí" : "No"}</span>
+                                    <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{t("listing.furnished")}</span>
+                                    <span className="font-medium">{listing.furnished ? t("common.yes") : t("common.no")}</span>
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Publicado</span>
+                                    <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{t("listing.published")}</span>
                                     <span className="font-medium">{new Date(listing.created_at).toLocaleDateString()}</span>
                                 </div>
                             </div>
@@ -363,7 +370,7 @@ export default function ListingView({ listingId }: { listingId: string }) {
                         {/* Map Section - Approximate Area */}
                         {listing.lat && listing.lng && (
                             <div className="glass p-6 rounded-2xl">
-                                <h2 className="text-xl font-bold mb-4">Ubicación Aproximada</h2>
+                                <h2 className="text-xl font-bold mb-4">{t("listing.location")}</h2>
                                 <div className="h-64 rounded-xl overflow-hidden border border-border">
                                     <LeafletMap
                                         listings={[listing]}
@@ -373,7 +380,7 @@ export default function ListingView({ listingId }: { listingId: string }) {
                                     />
                                 </div>
                                 <p className="text-xs text-muted-foreground mt-3 italic">
-                                    * Por seguridad, solo mostramos el área aproximada de la propiedad. La dirección exacta se proporcionará tras contactar al anfitrión.
+                                    * {t("listing.locationNote")}
                                 </p>
                             </div>
                         )}
@@ -388,9 +395,9 @@ export default function ListingView({ listingId }: { listingId: string }) {
                             <div className="bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800 p-6 rounded-2xl flex flex-col md:flex-row gap-4 items-center">
                                 <div className="text-4xl">🛡️</div>
                                 <div>
-                                    <h3 className="text-lg font-bold text-blue-800 dark:text-blue-300">¿Por qué confiar en este anuncio?</h3>
+                                    <h3 className="text-lg font-bold text-blue-800 dark:text-blue-300">{t("listing.trustBadge")}</h3>
                                     <p className="text-sm text-blue-700/80 dark:text-blue-400/80 leading-relaxed">
-                                        Esta propiedad ha pasado por nuestro proceso de verificación manual. Hemos comprobado la identidad del anfitrión y la existencia real del inmueble para garantizarte una búsqueda segura y sin fraudes.
+                                        {t("listing.trustText")}
                                     </p>
                                 </div>
                             </div>
@@ -399,7 +406,7 @@ export default function ListingView({ listingId }: { listingId: string }) {
                         {/* --- REVIEWS SECTION --- */}
                         <div className="space-y-6">
                             <h2 className="text-2xl font-bold flex items-center gap-3">
-                                Reseñas
+                                {t("listing.reviews")}
                                 {reviews.length > 0 && <span className="text-sm font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{reviews.length}</span>}
                             </h2>
 
@@ -409,25 +416,25 @@ export default function ListingView({ listingId }: { listingId: string }) {
 
                             {!session && (
                                 <div className="p-4 bg-muted/30 border border-dashed border-border rounded-xl text-center">
-                                    <Link href="/login?redirect=/listing" className="text-primary hover:underline font-medium">Inicia sesión</Link> para dejar una reseña (requiere haber contactado antes).
+                                    <Link href="/login?redirect=/listing" className="text-primary hover:underline font-medium">{t("auth.login")}</Link> {t("listing.loginToReview")}.
                                 </div>
                             )}
 
                             {reviews.length === 0 ? (
-                                <p className="text-muted-foreground italic">Aún no hay reseñas para esta propiedad.</p>
+                                <p className="text-muted-foreground italic">{t("listing.noReviews")}.</p>
                             ) : (
                                 <div className="grid gap-4">
                                     {reviews.map((review) => (
                                         <div key={review.id} className="glass p-5 rounded-xl border-l-4 border-l-primary/50">
                                             <div className="flex justify-between items-start mb-2">
                                                 <div>
-                                                    <p className="font-bold text-sm">{review.profiles?.full_name || "Usuario verificado"}</p>
+                                                    <p className="font-bold text-sm">{review.profiles?.full_name || t("listing.verifiedUser")}</p>
                                                     <p className="text-xs text-muted-foreground">{new Date(review.created_at).toLocaleDateString()}</p>
                                                 </div>
                                                 <div className="text-right">
                                                     <div className="flex flex-col items-end gap-1">
                                                         <StarRating rating={review.property_rating} readOnly size="sm" />
-                                                        <span className="text-[10px] text-muted-foreground uppercase tracking-wide">Propiedad</span>
+                                                        <span className="text-[10px] text-muted-foreground uppercase tracking-wide">{t("listing.propertyLabel")}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -454,18 +461,18 @@ export default function ListingView({ listingId }: { listingId: string }) {
                             </>
                         ) : (
                             <div className="p-6 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900 rounded-xl text-center text-red-600 dark:text-red-400 font-medium">
-                                Esta propiedad está archivada y ya no recibe mensajes.
+                                {t("listing.archivedMessage")}.
                             </div>
                         )}
 
                         <div className="glass p-5 rounded-xl text-sm space-y-3 border-l-4 border-l-yellow-400">
                             <h3 className="font-bold text-yellow-600 dark:text-yellow-500 flex items-center gap-2">
-                                ⚠️ Consejos de Seguridad
+                                ⚠️ {t("listing.safetyTips")}
                             </h3>
                             <ul className="space-y-2 text-muted-foreground list-disc pl-4">
-                                <li>Nunca envíes dinero sin visitar la propiedad.</li>
-                                <li>Verifica la identidad del propietario.</li>
-                                <li>Usa el sistema de mensajes de la plataforma.</li>
+                                <li>{t("listing.neverSendMoney")}.</li>
+                                <li>{t("listing.verifyIdentity")}.</li>
+                                <li>{t("listing.useMessaging")}.</li>
                             </ul>
                         </div>
                     </div>
@@ -477,13 +484,13 @@ export default function ListingView({ listingId }: { listingId: string }) {
                 <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setShowReportModal(false)} />
                     <div className="relative bg-card border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl animate-scale-in">
-                        <h3 className="text-xl font-bold mb-2">Reportar Anuncio</h3>
-                        <p className="text-sm text-muted-foreground mb-4">¿Por qué quieres reportar este anuncio? Tu reporte será revisado por el equipo de administración.</p>
+                        <h3 className="text-xl font-bold mb-2">{t("listing.reportTitle")}</h3>
+                        <p className="text-sm text-muted-foreground mb-4">{t("listing.reportDescription")}</p>
 
                         <textarea
                             className="w-full bg-background border border-border rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none mb-4"
                             rows={4}
-                            placeholder="Ej. El anuncio es falso, la información no es correcta, etc."
+                            placeholder={t("listing.reportPlaceholder")}
                             value={reportReason}
                             onChange={(e) => setReportReason(e.target.value)}
                         />
@@ -493,14 +500,14 @@ export default function ListingView({ listingId }: { listingId: string }) {
                                 onClick={() => setShowReportModal(false)}
                                 className="flex-1 px-4 py-2 rounded-lg text-sm font-medium border border-border hover:bg-muted transition-colors"
                             >
-                                Cancelar
+                                {t("common.cancel")}
                             </button>
                             <button
                                 disabled={reporting || !reportReason.trim()}
                                 onClick={handleReport}
                                 className="flex-1 px-4 py-2 rounded-lg text-sm font-medium bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50"
                             >
-                                {reporting ? "Enviando..." : "Enviar Reporte"}
+                                {reporting ? t("listing.reportSending") : t("listing.reportSend")}
                             </button>
                         </div>
                     </div>

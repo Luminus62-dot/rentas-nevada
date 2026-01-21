@@ -51,7 +51,7 @@ export function ImageUpload({ images, onChange }: ImageUploadProps) {
 
     return (
         <div className="space-y-4">
-            <label className="block text-sm font-medium text-foreground/80">Fotos de la Propiedad</label>
+            <label className="block text-sm font-medium text-foreground/80">Property photos</label>
 
             <div className="flex flex-wrap gap-4">
                 {images.map((url, index) => (
