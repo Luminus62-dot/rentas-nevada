@@ -40,7 +40,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-dots-pattern">
-        <div className="text-primary animate-pulse font-medium">Cargando tu espacio...</div>
+        <div className="text-primary animate-pulse font-medium">Loading your space...</div>
       </div>
     );
   }

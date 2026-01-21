@@ -108,7 +108,7 @@ export function TenantDashboard({ user }: { user: any }) {
                         onClick={() => setActiveTab('messages')}
                         className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'messages' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-muted text-muted-foreground hover:bg-muted/80'}`}
                     >
-                        💬 Mensajes
+                        💬 Messages
                     </button>
                 </div>
             </div>
@@ -147,7 +147,7 @@ export function TenantDashboard({ user }: { user: any }) {
                                     value={profileForm.whatsapp}
                                     onChange={e => setProfileForm({ ...profileForm, whatsapp: e.target.value })}
                                 />
-                                <p className="text-[10px] text-muted-foreground mt-1 text-center italic">Esto ayuda a que los propietarios confíen más en tu perfil.</p>
+                                <p className="text-[10px] text-muted-foreground mt-1 text-center italic">This helps landlords trust your profile more.</p>
                             </div>
                             <button
                                 onClick={async () => {
@@ -173,7 +173,7 @@ export function TenantDashboard({ user }: { user: any }) {
                     {/* Favorites Grid */}
                     <section>
                         <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                            ❤️ Favoritos Guardados
+                            ❤️ Saved favorites
                             <span className="text-sm font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{favorites.length}</span>
                         </h2>
 
@@ -184,9 +184,9 @@ export function TenantDashboard({ user }: { user: any }) {
                         ) : favorites.length === 0 ? (
                             <div className="text-center py-20 bg-muted/30 rounded-2xl border border-dashed border-border">
                                 <div className="text-4xl mb-4">🏠</div>
-                                <h3 className="text-lg font-medium mb-2">No tienes favoritos aún</h3>
+                                <h3 className="text-lg font-medium mb-2">You don't have any favorites yet</h3>
                                 <p className="text-muted-foreground mb-6">Explora las rentas y guarda las que te gusten.</p>
-                                <Link href="/search" className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90">Explorar Propiedades</Link>
+                                <Link href="/search" className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90">Browse listings</Link>
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -236,12 +236,12 @@ export function TenantDashboard({ user }: { user: any }) {
                     {/* Search Alerts */}
                     <section className="pt-8 border-t border-border/50">
                         <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                            🔔 Mis Alertas de Búsqueda
+                            🔔 My search alerts
                             <span className="text-sm font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{alerts.length}</span>
                         </h2>
 
                         {alerts.length === 0 ? (
-                            <p className="text-muted-foreground text-sm italic">No has guardado ninguna alerta de búsqueda todavía.</p>
+                            <p className="text-muted-foreground text-sm italic">You haven't saved any search alerts yet.</p>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {alerts.map((alert) => (
@@ -250,7 +250,7 @@ export function TenantDashboard({ user }: { user: any }) {
                                             <div className="flex flex-wrap gap-2 mb-1">
                                                 {alert.criteria.city && <Badge variant="default" className="text-[10px]">📍 {alert.criteria.city}</Badge>}
                                                 {alert.criteria.type && alert.criteria.type !== 'all' && <Badge variant="success" className="text-[10px] capitalize">{alert.criteria.type}</Badge>}
-                                                {alert.criteria.maxPrice && <Badge variant="warning" className="text-[10px]">💰 Máx ${alert.criteria.maxPrice}</Badge>}
+                                                {alert.criteria.maxPrice && <Badge variant="warning" className="text-[10px]">💰 Max ${alert.criteria.maxPrice}</Badge>}
                                             </div>
                                             <p className="text-[10px] text-muted-foreground">Creada el {new Date(alert.created_at).toLocaleDateString()}</p>
                                         </div>
@@ -310,18 +310,18 @@ export function TenantDashboard({ user }: { user: any }) {
                     {/* My Reviews Section */}
                     <section className="pt-8 border-t border-border/50 pb-10">
                         <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                            ✍️ Mis Reseñas
+                            ✍️ My reviews
                             <span className="text-sm font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{reviews.length}</span>
                         </h2>
 
                         {reviews.length === 0 ? (
-                            <p className="text-muted-foreground text-sm italic">No has dejado reseñas todavía.</p>
+                            <p className="text-muted-foreground text-sm italic">You haven't left any reviews yet.</p>
                         ) : (
                             <div className="grid grid-cols-1 gap-4">
                                 {reviews.map(rev => (
                                     <Card key={rev.id} className="p-4 border-border/40 hover:border-primary/20 transition-all">
                                         <div className="flex justify-between items-start mb-2">
-                                            <h3 className="font-semibold text-sm">Reseña: <span className="text-primary">{rev.listings?.title}</span></h3>
+                                            <h3 className="font-semibold text-sm">Review: <span className="text-primary">{rev.listings?.title}</span></h3>
                                             <div className="flex items-center gap-1 text-yellow-500 font-bold text-xs">★ {((rev.property_rating + rev.landlord_rating) / 2).toFixed(1)}</div>
                                         </div>
                                         <p className="text-xs text-foreground/80 italic mb-2">"{rev.comment}"</p>

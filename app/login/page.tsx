@@ -24,9 +24,9 @@ export default function LoginPage() {
     setEmailError(null);
     setPasswordError(null);
 
-    // Validar campos
+    // Validate fields
     const emailValidation = validateEmail(email);
-    const passwordValidation = validateRequired(password, "La contraseña");
+    const passwordValidation = validateRequired(password, "Password");
 
     if (emailValidation) {
       setEmailError(emailValidation);
@@ -68,10 +68,10 @@ export default function LoginPage() {
             👋
           </div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
-            Bienvenido de nuevo
+            Welcome back
           </h1>
           <p className="text-sm text-muted-foreground mt-2">
-            Ingresa a tu cuenta para gestionar tus rentas
+            Sign in to manage your rentals
           </p>
         </div>
 
@@ -83,7 +83,7 @@ export default function LoginPage() {
                 id="email"
                 className={`w-full px-4 py-3 border rounded-xl bg-background/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-300 ${emailError ? "border-red-500" : "border-border hover:border-primary/50"}`}
                 type="email"
-                placeholder="tu@email.com"
+                placeholder="you@email.com"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
@@ -97,8 +97,8 @@ export default function LoginPage() {
 
           <div className="space-y-1.5">
             <div className="flex justify-between items-center ml-1">
-              <label className="text-sm font-medium" htmlFor="password">Contraseña</label>
-              <a href="#" className="text-xs text-primary hover:underline">¿Olvidaste tu contraseña?</a>
+              <label className="text-sm font-medium" htmlFor="password">Password</label>
+              <a href="#" className="text-xs text-primary hover:underline">Forgot your password?</a>
             </div>
             <div className="relative group">
               <input
@@ -111,7 +111,7 @@ export default function LoginPage() {
                   setPassword(e.target.value);
                   if (passwordError) setPasswordError(null);
                 }}
-                onBlur={() => setPasswordError(validateRequired(password, "La contraseña"))}
+                onBlur={() => setPasswordError(validateRequired(password, "Password"))}
               />
             </div>
             {passwordError && <p className="text-red-500 text-xs ml-1 animate-slide-up">{passwordError}</p>}
@@ -133,16 +133,16 @@ export default function LoginPage() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Ingresando...
+                Signing in...
               </span>
-            ) : "Iniciar Sesión"}
+            ) : "Sign in"}
           </button>
         </form>
 
         <div className="mt-8 pt-6 border-t border-border/50 text-center text-sm">
-          <span className="text-muted-foreground">¿Aún no tienes cuenta? </span>
+          <span className="text-muted-foreground">Don&apos;t have an account? </span>
           <Link href="/register" className="text-primary font-semibold hover:text-primary/80 transition-colors inline-flex items-center gap-1 group">
-            Regístrate aquí
+            Sign up here
             <span className="group-hover:translate-x-1 transition-transform">→</span>
           </Link>
         </div>

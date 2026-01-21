@@ -35,7 +35,7 @@ export default function PublicProfile() {
             const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
             if (!uuidRegex.test(userId)) {
                 console.error("Invalid UUID format for profile:", userId);
-                setError("ID de usuario inválido.");
+                setError("Invalid user ID.");
                 setLoading(false);
                 return;
             }
@@ -121,7 +121,7 @@ export default function PublicProfile() {
 
             } catch (err: any) {
                 console.error("Error detailed in loadProfile:", err);
-                setError("Usuario no encontrado o perfil privado.");
+                setError("User not found or profile is private.");
             } finally {
                 setLoading(false);
             }
@@ -132,16 +132,16 @@ export default function PublicProfile() {
 
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center bg-dots-pattern">
-            <div className="animate-pulse text-primary font-medium">Cargando perfil...</div>
+            <div className="animate-pulse text-primary font-medium">Loading profile...</div>
         </div>
     );
 
     if (error || !profile) return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-dots-pattern">
             <div className="text-6xl mb-4">👻</div>
-            <h1 className="text-2xl font-bold mb-2">Perfil No Encontrado</h1>
-            <p className="text-muted-foreground mb-6">{error || "El usuario no existe."}</p>
-            <Link href="/" className="px-6 py-2 bg-primary text-primary-foreground rounded-lg">Volver</Link>
+            <h1 className="text-2xl font-bold mb-2">Profile not found</h1>
+            <p className="text-muted-foreground mb-6">{error || "The user does not exist."}</p>
+            <Link href="/" className="px-6 py-2 bg-primary text-primary-foreground rounded-lg">Back</Link>
         </div>
     );
 
@@ -160,7 +160,7 @@ export default function PublicProfile() {
                         <div className="w-32 h-32 rounded-full border-4 border-background bg-zinc-100 flex items-center justify-center text-4xl shadow-xl relative group">
                             {profile.full_name ? profile.full_name[0].toUpperCase() : "U"}
                             {profile.is_verified && (
-                                <div className="absolute bottom-1 right-1 bg-green-500 text-white p-1.5 rounded-full border-2 border-background" title="Identidad Verificada">
+                                <div className="absolute bottom-1 right-1 bg-green-500 text-white p-1.5 rounded-full border-2 border-background" title="Identity verified">
                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                                 </div>
                             )}
@@ -173,7 +173,7 @@ export default function PublicProfile() {
                                 <TrustBadge score={trustScore} />
                             </h1>
                             <p className="text-indigo-100 font-medium">
-                                Miembro desde {new Date(profile.created_at).toLocaleDateString()} • {profile.role === 'landlord' ? 'Propietario' : 'Inquilino'}
+                                Member since {new Date(profile.created_at).toLocaleDateString()} • {profile.role === 'landlord' ? 'Landlord' : 'Tenant'}
                             </p>
                         </div>
 
@@ -181,7 +181,7 @@ export default function PublicProfile() {
                         <div className="flex gap-4 pb-4 bg-background/80 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-lg mb-[-1rem] md:mb-4">
                             <div className="text-center px-2">
                                 <div className="text-2xl font-bold text-foreground">{listings.length}</div>
-                                <div className="text-xs text-muted-foreground uppercase">Activos</div>
+                                <div className="text-xs text-muted-foreground uppercase">Active</div>
                             </div>
                             <div className="w-px bg-border"></div>
                             <div className="text-center px-2">
@@ -201,7 +201,7 @@ export default function PublicProfile() {
                 <section className="grid md:grid-cols-3 gap-8">
                     <div className="md:col-span-1 space-y-6">
                         <Card className="p-6 space-y-4">
-                            <h3 className="font-bold text-lg">Nivel de Confianza</h3>
+                            <h3 className="font-bold text-lg">Trust level</h3>
 
                             <div className="relative pt-4">
                                 <div className="flex justify-between text-sm mb-2 font-medium">
@@ -215,7 +215,7 @@ export default function PublicProfile() {
                                     />
                                 </div>
                                 <p className="text-xs text-muted-foreground mt-2">
-                                    El Trust Score se basa en la verificación de identidad, antigüedad, y reseñas positivas de otros usuarios.
+                                    The Trust Score is based on identity verification, tenure, and positive reviews from other users.
                                 </p>
                             </div>
 
@@ -306,7 +306,7 @@ export default function PublicProfile() {
                                 <Card key={review.id} className="p-5 hover:shadow-md transition-all">
                                     <div className="flex justify-between items-start mb-3">
                                         <div className="flex flex-col">
-                                            <span className="font-bold text-sm">{review.profiles?.full_name || "Usuario Anónimo"}</span>
+                                            <span className="font-bold text-sm">{review.profiles?.full_name || "Anonymous user"}</span>
                                             <span className="text-xs text-muted-foreground">sobre <Link href={`/listing/${review.listing_id}`} className="hover:underline text-primary">{review.listings?.title}</Link></span>
                                         </div>
                                         <StarRating rating={(review.property_rating + review.landlord_rating) / 2} readOnly size="sm" />

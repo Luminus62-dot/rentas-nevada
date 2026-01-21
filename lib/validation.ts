@@ -1,15 +1,15 @@
 /**
- * Utilidades de validación para formularios
+ * Form validation utilities
  */
 
 export function validateEmail(email: string): string | null {
   if (!email || email.trim() === "") {
-    return "El email es requerido";
+    return "Email is required";
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    return "El email no tiene un formato válido";
+    return "Email format is invalid";
   }
 
   return null;
@@ -17,11 +17,11 @@ export function validateEmail(email: string): string | null {
 
 export function validatePassword(password: string): string | null {
   if (!password || password.trim() === "") {
-    return "La contraseña es requerida";
+    return "Password is required";
   }
 
   if (password.length < 6) {
-    return "La contraseña debe tener al menos 6 caracteres";
+    return "Password must be at least 6 characters";
   }
 
   return null;
@@ -29,7 +29,7 @@ export function validatePassword(password: string): string | null {
 
 export function validateRequired(value: string, fieldName: string): string | null {
   if (!value || value.trim() === "") {
-    return `${fieldName} es requerido`;
+    return `${fieldName} is required`;
   }
   return null;
 }
@@ -42,15 +42,15 @@ export function validatePositiveNumber(
   const num = typeof value === "string" ? parseFloat(value) : value;
 
   if (isNaN(num)) {
-    return `${fieldName} debe ser un número válido`;
+    return `${fieldName} must be a valid number`;
   }
 
   if (allowZero && num < 0) {
-    return `${fieldName} no puede ser negativo`;
+    return `${fieldName} cannot be negative`;
   }
 
   if (!allowZero && num <= 0) {
-    return `${fieldName} debe ser mayor a 0`;
+    return `${fieldName} must be greater than 0`;
   }
 
   return null;
@@ -58,19 +58,19 @@ export function validatePositiveNumber(
 
 export function validateDate(dateString: string, fieldName: string, allowPast: boolean = false): string | null {
   if (!dateString || dateString.trim() === "") {
-    return null; // Fechas opcionales
+    return null; // Optional dates
   }
 
   const date = new Date(dateString);
   if (isNaN(date.getTime())) {
-    return `${fieldName} no es una fecha válida`;
+    return `${fieldName} is not a valid date`;
   }
 
   if (!allowPast) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     if (date < today) {
-      return `${fieldName} no puede ser una fecha pasada`;
+      return `${fieldName} cannot be a past date`;
     }
   }
 
@@ -83,7 +83,7 @@ export function validateMinLength(
   fieldName: string
 ): string | null {
   if (value && value.trim().length < minLength) {
-    return `${fieldName} debe tener al menos ${minLength} caracteres`;
+    return `${fieldName} must be at least ${minLength} characters`;
   }
   return null;
 }
@@ -94,7 +94,7 @@ export function validateMaxLength(
   fieldName: string
 ): string | null {
   if (value && value.trim().length > maxLength) {
-    return `${fieldName} no puede tener más de ${maxLength} caracteres`;
+    return `${fieldName} cannot exceed ${maxLength} characters`;
   }
   return null;
 }

@@ -23,7 +23,7 @@ import dynamic from "next/dynamic";
 
 const LeafletMap = dynamic(() => import("@/components/LeafletMap"), {
   ssr: false,
-  loading: () => <div className="h-64 bg-muted animate-pulse rounded-lg flex items-center justify-center">Cargando mapa...</div>
+  loading: () => <div className="h-64 bg-muted animate-pulse rounded-lg flex items-center justify-center">Loading map...</div>
 });
 
 export default function PostPage() {
@@ -102,7 +102,7 @@ export default function PostPage() {
         if (listing && !error) {
           // Verify ownership
           if (listing.owner_id !== user.id) {
-            setError("No tienes permiso para editar esta propiedad.");
+            setError("You don't have permission to edit this listing.");
             return;
           }
 
@@ -147,9 +147,9 @@ export default function PostPage() {
         const newLng = parseFloat(result.lon);
         setLat(newLat);
         setLng(newLng);
-        showToast("¡Ubicación encontrada!", "success");
+        showToast("Location found!", "success");
       } else {
-        showToast("No se encontró la dirección exacta.", "info");
+        showToast("Exact address not found.", "info");
       }
     } catch (err) {
       console.error("Geocoding error:", err);
@@ -167,11 +167,11 @@ export default function PostPage() {
     setDateError(null);
     setDescriptionError(null);
 
-    const titleValidation = validateRequired(title, "El título") || validateMinLength(title, 5, "El título");
-    const priceValidation = validatePositiveNumber(price, "El precio");
-    const depositValidation = deposit ? validatePositiveNumber(deposit, "El depósito", true) : null;
-    const dateValidation = validateDate(availableFrom, "La fecha de disponibilidad", false);
-    const descriptionValidation = description ? validateMaxLength(description, 2000, "La descripción") : null;
+    const titleValidation = validateRequired(title, "Title") || validateMinLength(title, 5, "Title");
+    const priceValidation = validatePositiveNumber(price, "Price");
+    const depositValidation = deposit ? validatePositiveNumber(deposit, "Deposit", true) : null;
+    const dateValidation = validateDate(availableFrom, "Availability date", false);
+    const descriptionValidation = description ? validateMaxLength(description, 2000, "Description") : null;
 
     if (titleValidation) { setTitleError(titleValidation); return; }
     if (priceValidation) { setPriceError(priceValidation); return; }
@@ -213,7 +213,7 @@ export default function PostPage() {
           .eq("id", editId);
 
         if (updateError) throw updateError;
-        showToast("¡Propiedad actualizada exitosamente!", "success");
+        showToast("Listing updated successfully!", "success");
         router.push(`/listing/${editId}`);
       } else {
         // INSERT
@@ -224,7 +224,7 @@ export default function PostPage() {
           .single();
 
         if (insertError) throw insertError;
-        showToast("¡Propiedad publicada! Pendiente de verificación.", "success");
+        showToast("Listing published! Pending verification.", "success");
         router.push(`/listing/${data.id}`);
       }
     } catch (err) {
@@ -238,7 +238,7 @@ export default function PostPage() {
   const inputClass = (err: string | null) =>
     `w-full px-4 py-3 border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all ${err ? "border-red-500" : "border-border hover:border-primary/50"}`;
 
-  if (loading) return <div className="container-custom py-20 text-center"><div className="animate-pulse">Cargando...</div></div>;
+  if (loading) return <div className="container-custom py-20 text-center"><div className="animate-pulse">Loading...</div></div>;
 
   // 1. Not Logged In
   if (!user) {
@@ -254,15 +254,15 @@ export default function PostPage() {
               🔒
             </div>
             <div>
-              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">Inicia Sesión</h1>
-              <p className="text-muted-foreground mt-2">Necesitas una cuenta para publicar propiedades en Stay Nevada.</p>
+              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">Sign in</h1>
+              <p className="text-muted-foreground mt-2">You need an account to post listings on Stay Nevada.</p>
             </div>
             <div className="flex gap-4 justify-center pt-2">
               <Link href="/login" className="flex-1 bg-primary text-primary-foreground py-2.5 rounded-lg font-medium hover:bg-primary/90 transition-all shadow-md hover:shadow-lg active:scale-95">
-                Ingresar
+                Sign in
               </Link>
               <Link href="/register" className="flex-1 bg-muted/80 backdrop-blur-sm text-foreground py-2.5 rounded-lg font-medium hover:bg-muted transition-all border border-border/50 hover:border-border active:scale-95">
-                Registrarse
+                Sign up
               </Link>
             </div>
           </Card>
@@ -286,22 +286,22 @@ export default function PostPage() {
                 🛡️
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Verificación Requerida</h1>
+                <h1 className="text-2xl font-bold text-foreground">Verification required</h1>
                 <p className="text-muted-foreground mt-2">
-                  Para garantizar la seguridad, verificamos a todos los propietarios antes de publicar.
+                  To ensure safety, we verify all owners before publishing.
                 </p>
               </div>
             </div>
 
             <div className="bg-muted/40 p-5 rounded-lg space-y-4 shadow-inner border border-border/50 backdrop-blur-sm">
-              <h3 className="font-semibold text-base text-foreground">Pasos para verificar tu cuenta:</h3>
+              <h3 className="font-semibold text-base text-foreground">Steps to verify your account:</h3>
 
               <div className="text-sm text-muted-foreground space-y-2">
-                <p>Envía un correo a <span className="font-medium text-primary">verificaciones@rentasnevada.com</span> incluyendo:</p>
+                <p>Email <span className="font-medium text-primary">verificaciones@rentasnevada.com</span> and include:</p>
                 <ul className="list-disc list-inside pl-2 space-y-1.5 bg-background/40 p-3 rounded border border-border/50">
-                  <li>Nombre Completo</li>
-                  <li>Fecha de Nacimiento</li>
-                  <li><span className="font-medium text-foreground">Fotos de la propiedad</span> (Requerido)</li>
+                  <li>Full name</li>
+                  <li>Date of birth</li>
+                  <li><span className="font-medium text-foreground">Property photos</span> (Required)</li>
                 </ul>
               </div>
 
@@ -309,16 +309,16 @@ export default function PostPage() {
                 <p className="text-sm text-blue-800 dark:text-blue-300 flex items-center gap-2">
                   <span className="text-lg">💳</span>
                   <span>
-                    <span className="font-bold">Costo de verificación:</span> $50.00 USD
+                    <span className="font-bold">Verification fee:</span> $50.00 USD
                   </span>
                 </p>
               </div>
             </div>
 
             <div className="pt-4 flex justify-between items-center border-t border-border/30">
-              <span className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded">Respuesta en 24-48hrs</span>
+              <span className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded">Response in 24-48 hours</span>
               <Link href="/dashboard" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1 group">
-                Volver al Dashboard
+                Back to dashboard
                 <span className="group-hover:translate-x-1 transition-transform">→</span>
               </Link>
             </div>
@@ -339,26 +339,26 @@ export default function PostPage() {
       <div className="container-custom relative z-10">
         <Card className="max-w-3xl mx-auto p-8 animate-fade-in border-none shadow-xl bg-card/60 backdrop-blur-md">
           <div className="mb-8 border-b border-border/50 pb-6">
-            <Badge variant="success" className="mb-4">Usuario Verificado</Badge>
+          <Badge variant="success" className="mb-4">Verified user</Badge>
             <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">
-              {editId ? "Editar Propiedad" : "Publicar Propiedad"}
+              {editId ? "Edit listing" : "Post listing"}
             </h1>
             <p className="text-muted-foreground mt-2 text-lg">
-              {editId ? "Actualiza los detalles de tu anuncio." : "Comparte los detalles de tu inmueble con miles de inquilinos."}
+              {editId ? "Update your listing details." : "Share your property details with thousands of tenants."}
             </p>
           </div>
 
           <form onSubmit={onSubmit} className="space-y-8">
             {/* Título */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-foreground/80">Título del anuncio</label>
+              <label className="block text-sm font-medium text-foreground/80">Listing title</label>
               <input
                 className={inputClass(titleError)}
                 type="text"
-                placeholder="Ej. Habitación amplia en Summerlin con baño privado"
+                placeholder="e.g., Spacious room in Summerlin with private bath"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                onBlur={() => setTitleError(validateRequired(title, "El título") || validateMinLength(title, 5, "El título"))}
+                onBlur={() => setTitleError(validateRequired(title, "Title") || validateMinLength(title, 5, "Title"))}
               />
               {titleError && <p className="text-red-500 text-xs font-medium">{titleError}</p>}
             </div>
@@ -366,10 +366,10 @@ export default function PostPage() {
             {/* Images */}
             <ImageUpload images={images} onChange={setImages} />
 
-            {/* Precio y Depósito */}
+            {/* Price and deposit */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground/80">Precio Mensual ($)</label>
+                <label className="block text-sm font-medium text-foreground/80">Monthly price ($)</label>
                 <div className="relative">
                   <span className="absolute left-4 top-3.5 text-muted-foreground">$</span>
                   <input
@@ -386,7 +386,7 @@ export default function PostPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground/80">Depósito (Opcional)</label>
+                <label className="block text-sm font-medium text-foreground/80">Deposit (optional)</label>
                 <div className="relative">
                   <span className="absolute left-4 top-3.5 text-muted-foreground">$</span>
                   <input
@@ -403,18 +403,18 @@ export default function PostPage() {
               </div>
             </div>
 
-            {/* Tipo y Amueblado */}
+            {/* Type and furnished */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground/80">Tipo de Inmueble</label>
+                <label className="block text-sm font-medium text-foreground/80">Property type</label>
                 <select
                   className={inputClass(null)}
                   value={type}
                   onChange={(e) => setType(e.target.value as any)}
                 >
-                  <option value="room">Habitación / Cuarto</option>
-                  <option value="apartment">Apartamento</option>
-                  <option value="house">Casa</option>
+                  <option value="room">Room</option>
+                  <option value="apartment">Apartment</option>
+                  <option value="house">House</option>
                 </select>
               </div>
 
@@ -426,26 +426,26 @@ export default function PostPage() {
                     checked={furnished}
                     onChange={(e) => setFurnished(e.target.checked)}
                   />
-                  <span className="font-medium">¿Está amueblado?</span>
+                  <span className="font-medium">Is it furnished?</span>
                 </label>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground/80">Ciudad</label>
+                <label className="block text-sm font-medium text-foreground/80">City</label>
                 <input
                   className={inputClass(null)}
-                  placeholder="Ej. Las Vegas, Henderson..."
+                  placeholder="e.g., Las Vegas, Henderson..."
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground/80">Zona / Área (Pública)</label>
+                <label className="block text-sm font-medium text-foreground/80">Area / District (public)</label>
                 <input
                   className={inputClass(null)}
-                  placeholder="Ej. The Strip, Downtown..."
+                  placeholder="e.g., The Strip, Downtown..."
                   value={area}
                   onChange={(e) => setArea(e.target.value)}
                 />
@@ -455,20 +455,20 @@ export default function PostPage() {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-foreground/80">Vecindario / Neighborhood (Específico)</label>
+                  <label className="block text-sm font-medium text-foreground/80">Neighborhood (specific)</label>
                   <input
                     className={inputClass(null)}
-                    placeholder="Ej. Summerlin South, Enterprise..."
+                    placeholder="e.g., Summerlin South, Enterprise..."
                     value={neighborhood}
                     onChange={(e) => setNeighborhood(e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-foreground/80">Dirección Exacta (Solo Interno)</label>
+                  <label className="block text-sm font-medium text-foreground/80">Exact address (internal only)</label>
                   <div className="flex gap-2">
                     <input
                       className={inputClass(null)}
-                      placeholder="Ej. 123 Main St..."
+                      placeholder="e.g., 123 Main St..."
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleGeocode())}
@@ -478,7 +478,7 @@ export default function PostPage() {
                       onClick={handleGeocode}
                       disabled={isGeocoding}
                       className="bg-muted px-4 rounded-lg hover:bg-muted/80 transition-colors border border-border"
-                      title="Buscar en mapa"
+                      title="Search on map"
                     >
                       {isGeocoding ? '...' : '🔍'}
                     </button>
@@ -487,8 +487,8 @@ export default function PostPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground/80">Ubicación Exacta (Solo Interno)</label>
-                <p className="text-xs text-muted-foreground mb-2">Haz clic en el mapa para marcar la ubicación precisa. Los usuarios solo verán un radio aproximado.</p>
+                <label className="block text-sm font-medium text-foreground/80">Exact location (internal only)</label>
+                <p className="text-xs text-muted-foreground mb-2">Click on the map to mark the exact location. Users will only see an approximate radius.</p>
                 <div className="h-64 relative rounded-lg overflow-hidden border border-border">
                   <LeafletMap
                     center={lat && lng ? [lat, lng] : [36.1699, -115.1398]}
@@ -509,7 +509,7 @@ export default function PostPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-foreground/80">Fecha de Disponibilidad</label>
+              <label className="block text-sm font-medium text-foreground/80">Available from</label>
               <input
                 className={inputClass(dateError)}
                 type="date"
@@ -522,7 +522,7 @@ export default function PostPage() {
 
             {/* Descripción */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-foreground/80">Descripción</label>
+              <label className="block text-sm font-medium text-foreground/80">Description</label>
               <textarea
                 className={inputClass(descriptionError)}
                 rows={6}
@@ -548,7 +548,7 @@ export default function PostPage() {
             )}
 
             <p className="text-[10px] text-muted-foreground text-center leading-tight">
-              Al publicar este anuncio, confirmas que tienes los derechos legales sobre la propiedad y que la información proporcionada es verídica. Aceptas nuestros <Link href="/terms" className="text-primary hover:underline">Términos de Servicio</Link> y <Link href="/privacy" className="text-primary hover:underline">Política de Privacidad</Link>.
+              By posting this listing, you confirm you have legal rights to the property and the information provided is accurate. You accept our <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
             </p>
 
             <button
@@ -563,7 +563,7 @@ export default function PostPage() {
                   </svg>
                   Publicando...
                 </span>
-              ) : (editId ? "Guardar Cambios" : "Publicar Anuncio")}
+              ) : (editId ? "Save changes" : "Post listing")}
             </button>
           </form>
         </Card>

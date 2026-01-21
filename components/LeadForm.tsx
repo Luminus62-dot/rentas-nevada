@@ -24,11 +24,11 @@ export default function LeadForm({ listingId, landlordId }: { listingId: string,
     setMessageError(null);
     setNameError(null);
 
-    // Validar campos
+    // Validate fields
     const messageValidation =
-      validateRequired(message, "El mensaje") ||
-      validateMinLength(message, 10, "El mensaje") ||
-      validateMaxLength(message, 1000, "El mensaje");
+      validateRequired(message, "Message") ||
+      validateMinLength(message, 10, "Message") ||
+      validateMaxLength(message, 1000, "Message");
 
     if (messageValidation) { setMessageError(messageValidation); return; }
 
@@ -43,7 +43,7 @@ export default function LeadForm({ listingId, landlordId }: { listingId: string,
       const { error: insertError } = await supabase.from("leads").insert({
         listing_id: listingId,
         from_user_id: userId,
-        name: name || user?.user_metadata?.full_name || "Interesado",
+        name: name || user?.user_metadata?.full_name || "Interested",
         message,
       });
 
@@ -83,7 +83,7 @@ export default function LeadForm({ listingId, landlordId }: { listingId: string,
       } else {
         setName("");
         setMessage("");
-        setOk("✅ Mensaje enviado con éxito.");
+        setOk("✅ Message sent successfully.");
       }
     } catch (err) {
       setError(getErrorMessage(err));
@@ -98,15 +98,15 @@ export default function LeadForm({ listingId, landlordId }: { listingId: string,
   return (
     <Card className="mt-8 border-none shadow-xl bg-card/80 backdrop-blur-sm">
       <div className="p-6">
-        <h2 className="font-bold text-xl mb-1">Contactar al Anunciante</h2>
-        <p className="text-sm text-muted-foreground mb-6">Envía un mensaje directo para obtener más información.</p>
+        <h2 className="font-bold text-xl mb-1">Contact the owner</h2>
+        <p className="text-sm text-muted-foreground mb-6">Send a direct message to get more information.</p>
 
         <form onSubmit={submit} className="space-y-4">
           <div>
             <input
               className={inputClass(nameError)}
               type="text"
-              placeholder="Tu nombre (opcional)"
+              placeholder="Your name (optional)"
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
@@ -119,7 +119,7 @@ export default function LeadForm({ listingId, landlordId }: { listingId: string,
           <div>
             <textarea
               className={inputClass(messageError)}
-              placeholder="Hola, me interesa tu propiedad. ¿Sigue disponible?"
+              placeholder="Hi, I'm interested in your listing. Is it still available?"
               value={message}
               rows={4}
               onChange={(e) => {
@@ -138,9 +138,9 @@ export default function LeadForm({ listingId, landlordId }: { listingId: string,
             <div className="bg-green-50 border border-green-100 p-4 rounded-xl my-4 animate-in fade-in zoom-in duration-300">
               <p className="text-green-700 text-sm font-medium">{ok}</p>
               {isLoggedIn && (
-                <Link href="/dashboard" className="mt-2 text-xs text-green-800 font-bold hover:underline inline-block">
-                  Ir a Mis Mensajes 💬
-                </Link>
+                  <Link href="/dashboard" className="mt-2 text-xs text-green-800 font-bold hover:underline inline-block">
+                  Go to my messages 💬
+                  </Link>
               )}
             </div>
           )}
@@ -149,7 +149,7 @@ export default function LeadForm({ listingId, landlordId }: { listingId: string,
             className="w-full bg-primary text-primary-foreground font-semibold py-3 rounded-lg hover:bg-primary/90 transition-all shadow-md active:scale-[0.98]"
             disabled={loading}
           >
-            {loading ? "Enviando..." : "Enviar mensaje"}
+            {loading ? "Sending..." : "Send message"}
           </button>
         </form>
       </div>
