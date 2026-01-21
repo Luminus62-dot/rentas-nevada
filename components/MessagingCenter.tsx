@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useToast } from "@/components/ToastContext";
 import { Conversation, Message } from "@/lib/types";
+import { useI18n } from "@/lib/i18n";
 
 export function MessagingCenter({ userId, role, initialConversationId, onSelect }: {
     userId: string,
@@ -17,6 +18,7 @@ export function MessagingCenter({ userId, role, initialConversationId, onSelect 
     const [newMessage, setNewMessage] = useState("");
     const [loading, setLoading] = useState(true);
     const { showToast } = useToast();
+    const { t } = useI18n();
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [presenceUsers, setPresenceUsers] = useState<any>({});
     const [isTyping, setIsTyping] = useState<boolean>(false);
@@ -225,7 +227,7 @@ export function MessagingCenter({ userId, role, initialConversationId, onSelect 
         }).select().single();
 
         if (error) {
-            showToast("Error al enviar", "error");
+            showToast(t("messaging.errorSending"), "error");
             setMessages(prev => prev.filter(m => m.id !== tempId));
         } else if (data) {
             // Update will come through realtime too, but we can sync now
@@ -235,7 +237,7 @@ export function MessagingCenter({ userId, role, initialConversationId, onSelect 
 
     async function deleteConversation(id: string, e: React.MouseEvent) {
         e.stopPropagation();
-        if (!confirm("¿Ocultar este chat?")) return;
+        if (!confirm(t("messaging.hideChat"))) return;
         const updateField = role === 'landlord' ? { deleted_by_landlord: true } : { deleted_by_tenant: true };
         const { error } = await supabase.from("conversations").update(updateField).eq("id", id);
         if (!error) {
@@ -246,12 +248,12 @@ export function MessagingCenter({ userId, role, initialConversationId, onSelect 
 
     async function finishConversation() {
         if (!activeConv) return;
-        if (!confirm("¿Marcar trato como finalizado?")) return;
+        if (!confirm(t("messaging.finishConfirm"))) return;
         const { error } = await supabase.from("conversations").update({ status: 'finished' }).eq("id", activeConv.id);
-        if (!error) showToast("Trato finalizado");
+        if (!error) showToast(t("messaging.closed"));
     }
 
-    if (loading) return <div className="p-10 text-center animate-pulse text-muted-foreground">Cargando mensajes...</div>;
+    if (loading) return <div className="p-10 text-center animate-pulse text-muted-foreground">{t("messaging.loading")}</div>;
 
     return (
         <div className="flex bg-card/40 border border-border/50 rounded-3xl overflow-hidden h-[600px] shadow-2xl backdrop-blur-xl ring-1 ring-white/10">
@@ -262,7 +264,7 @@ export function MessagingCenter({ userId, role, initialConversationId, onSelect 
                 </div>
                 <div className="flex-1 overflow-y-auto">
                     {conversations.length === 0 ? (
-                        <div className="p-10 text-center text-sm text-muted-foreground italic">No hay mensajes.</div>
+                        <div className="p-10 text-center text-sm text-muted-foreground italic">{t("messaging.empty")}</div>
                     ) : (
                         conversations.map(conv => {
                             const otherUser = role === 'landlord' ? conv.tenant : conv.landlord;
@@ -275,7 +277,7 @@ export function MessagingCenter({ userId, role, initialConversationId, onSelect 
                                 >
                                     <div className="flex justify-between items-start mb-1">
                                         <p className={`font-bold text-sm truncate ${activeConv?.id === conv.id ? 'text-primary' : 'text-foreground'}`}>
-                                            {otherUser?.full_name || "Usuario"}
+                                            {otherUser?.full_name || t("messaging.userFallback")}
                                             {isOnline && <span className="inline-block w-2 h-2 bg-green-500 rounded-full ml-2" />}
                                         </p>
                                         <span className="text-[9px] opacity-50">{new Date(conv.updated_at).toLocaleDateString()}</span>
@@ -305,14 +307,14 @@ export function MessagingCenter({ userId, role, initialConversationId, onSelect 
                                 </div>
                             </div>
                             {role === 'landlord' && activeConv.status !== 'finished' && (
-                                <button onClick={finishConversation} className="text-[10px] font-bold bg-green-500 text-green-700 px-3 py-1 rounded-full">✅ Finalizar</button>
+                                <button onClick={finishConversation} className="text-[10px] font-bold bg-green-500 text-green-700 px-3 py-1 rounded-full">✅ {t("messaging.finish")}</button>
                             )}
                         </div>
 
                         {/* Messages */}
                         <div className="flex-1 overflow-y-auto p-4 space-y-4">
                             {activeConv.status === 'finished' && (
-                                <div className="p-3 bg-green-50 border border-green-100 rounded-xl text-center text-xs text-green-800 font-medium">Deal Finalizado ✨</div>
+                                <div className="p-3 bg-green-50 border border-green-100 rounded-xl text-center text-xs text-green-800 font-medium">{t("messaging.finished")}</div>
                             )}
                             {messages.map((msg, i) => (
                                 <div key={i} className={`flex ${msg.sender_id === userId ? 'justify-end' : 'justify-start'}`}>
@@ -322,7 +324,7 @@ export function MessagingCenter({ userId, role, initialConversationId, onSelect 
                                 </div>
                             ))}
                             {isTyping && (
-                                <div className="text-[10px] text-muted-foreground italic ml-2 animate-pulse">Escribiendo...</div>
+                                <div className="text-[10px] text-muted-foreground italic ml-2 animate-pulse">{t("messaging.typing")}</div>
                             )}
                             <div ref={messagesEndRef} />
                         </div>
@@ -333,13 +335,13 @@ export function MessagingCenter({ userId, role, initialConversationId, onSelect 
                                 <div className="flex gap-2 bg-card border border-border/40 rounded-xl p-1 shadow-sm">
                                     <input
                                         type="text"
-                                        placeholder="Mensaje..."
+                                        placeholder={t("messaging.messagePlaceholder")}
                                         className="flex-1 bg-transparent px-3 py-2 text-sm focus:outline-none"
                                         value={newMessage}
                                         onChange={e => handleTyping(e.target.value)}
                                         onKeyDown={e => e.key === 'Enter' && sendMessage()}
                                     />
-                                    <button onClick={sendMessage} className="bg-primary text-white px-4 rounded-lg font-bold text-sm">Enviar</button>
+                                    <button onClick={sendMessage} className="bg-primary text-white px-4 rounded-lg font-bold text-sm">{t("messaging.send")}</button>
                                 </div>
                             </div>
                         )}
@@ -347,7 +349,7 @@ export function MessagingCenter({ userId, role, initialConversationId, onSelect 
                 ) : (
                     <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground/50">
                         <span className="text-4xl mb-2">💬</span>
-                        <p className="text-sm">Selecciona un chat</p>
+                        <p className="text-sm">{t("messaging.selectChat")}</p>
                     </div>
                 )}
             </div>

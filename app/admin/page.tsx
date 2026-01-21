@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import type { Listing, ServiceRequest, ServiceRequestStatus, ListingUpdatePayload } from "@/lib/types";
 import { getErrorMessage } from "@/lib/errorHandler";
+import { useI18n } from "@/lib/i18n";
 import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
 import { AdminStatCard } from "@/components/AdminStats";
@@ -23,6 +24,7 @@ interface Profile {
 
 export default function AdminPage() {
   const router = useRouter();
+  const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState<"overview" | "requests" | "listings" | "users" | "reports" | "logs">("overview");
@@ -225,6 +227,18 @@ export default function AdminPage() {
   }
 
   // --- FILTERS ---
+  const getListingStatusLabel = (status: Listing["verified_status"]) => {
+    switch (status) {
+      case "pending":
+        return t("admin.statusPending");
+      case "verified":
+        return t("admin.statusVerified");
+      case "archived":
+        return t("admin.statusArchived");
+      default:
+        return t("admin.statusUnverified");
+    }
+  };
 
   const filteredListings = useMemo(() => {
     return listings.filter(l => {
@@ -243,7 +257,7 @@ export default function AdminPage() {
   }, [users, searchTerm]);
 
 
-  if (loading) return <div className="container-custom py-20 text-center"><div className="animate-pulse text-primary font-medium">Cargando dashboard...</div></div>;
+  if (loading) return <div className="container-custom py-20 text-center"><div className="animate-pulse text-primary font-medium">{t("admin.loading")}</div></div>;
 
   if (!isAdmin) {
     return (
@@ -251,9 +265,9 @@ export default function AdminPage() {
         <InteractiveBackground />
         <Card className="max-w-md w-full text-center p-10 glass border-red-200">
           <div className="text-4xl mb-4">🚫</div>
-          <h1 className="text-2xl font-bold mb-2 text-red-600">Acceso Denegado</h1>
-          <p className="text-muted-foreground mb-6">No tienes permisos de administrador.</p>
-          <Link href="/" className="text-primary hover:underline font-medium">Volver al inicio</Link>
+          <h1 className="text-2xl font-bold mb-2 text-red-600">{t("admin.accessDenied")}</h1>
+          <p className="text-muted-foreground mb-6">{t("admin.noAccess")}</p>
+          <Link href="/" className="text-primary hover:underline font-medium">{t("admin.backHome")}</Link>
         </Card>
       </div>
     );
@@ -281,19 +295,19 @@ export default function AdminPage() {
         <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-              Admin Dashboard
+              {t("admin.title")}
             </h1>
-            <p className="text-muted-foreground mt-1">Control total de la plataforma</p>
+            <p className="text-muted-foreground mt-1">{t("admin.subtitle")}</p>
           </div>
 
           <div className="flex bg-muted/50 p-1 rounded-xl backdrop-blur-sm border border-border/50 overflow-x-auto max-w-full">
             {[
-              { id: 'overview', label: 'Resumen', icon: '📊' },
-              { id: 'requests', label: 'Solicitudes', icon: '🔔', count: newRequests },
-              { id: 'reports', label: 'Reportes', icon: '🚩', count: pendingReports },
-              { id: 'listings', label: 'Propiedades', icon: '🏠', count: pendingListings },
-              { id: 'users', label: 'Usuarios', icon: '👥' },
-              { id: 'logs', label: 'Logs', icon: '📜' },
+              { id: 'overview', label: t("admin.overview"), icon: '📊' },
+              { id: 'requests', label: t("admin.requests"), icon: '🔔', count: newRequests },
+              { id: 'reports', label: t("admin.reports"), icon: '🚩', count: pendingReports },
+              { id: 'listings', label: t("admin.listings"), icon: '🏠', count: pendingListings },
+              { id: 'users', label: t("admin.users"), icon: '👥' },
+              { id: 'logs', label: t("admin.logs"), icon: '📜' },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -322,21 +336,21 @@ export default function AdminPage() {
           {activeTab === 'overview' && (
             <div className="space-y-8">
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <AdminStatCard title="Usuarios Totales" value={totalUsers} icon="👥" color="blue" trend={`+${verifiedUsers} Verificados`} trendUp={true} />
-                <AdminStatCard title="Propiedades" value={totalListings} icon="🏠" color="purple" trend={`${pendingListings} Pendientes`} trendUp={pendingListings === 0} />
-                <AdminStatCard title="Solicitudes" value={newRequests} icon="🔔" color="orange" trend={newRequests > 0 ? "Requiere atención" : "Todo al día"} trendUp={newRequests === 0} />
-                <AdminStatCard title="Ingresos (Est.)" value="$0" icon="💰" color="green" trend="Próximamente" trendUp={true} />
+                <AdminStatCard title={t("admin.totalUsers")} value={totalUsers} icon="👥" color="blue" trend={`+${verifiedUsers} ${t("admin.verified")}`} trendUp={true} />
+                <AdminStatCard title={t("admin.listingsCount")} value={totalListings} icon="🏠" color="purple" trend={`${pendingListings} ${t("admin.pending")}`} trendUp={pendingListings === 0} />
+                <AdminStatCard title={t("admin.requestsCount")} value={newRequests} icon="🔔" color="orange" trend={newRequests > 0 ? t("admin.needsAttention") : t("admin.allCaughtUp")} trendUp={newRequests === 0} />
+                <AdminStatCard title={t("admin.revenue")} value="$0" icon="💰" color="green" trend={t("admin.comingSoon")} trendUp={true} />
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
                 <Card className="glass p-6">
-                  <h3 className="font-semibold mb-4">Actividad Reciente</h3>
+                  <h3 className="font-semibold mb-4">{t("admin.recentActivity")}</h3>
                   <div className="space-y-4">
                     {users.slice(0, 3).map(u => (
                       <div key={u.id} className="flex items-center gap-3 text-sm">
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs">👤</div>
                         <div>
-                          <p className="font-medium">Nuevo usuario registrado</p>
+                          <p className="font-medium">{t("admin.newUser")}</p>
                           <p className="text-muted-foreground text-xs">{u.email}</p>
                         </div>
                         <div className="ml-auto text-xs text-muted-foreground">{new Date(u.created_at || "").toLocaleDateString()}</div>
@@ -346,11 +360,11 @@ export default function AdminPage() {
                 </Card>
 
                 <Card className="glass p-6">
-                  <h3 className="font-semibold mb-4">Estado del Sistema</h3>
+                  <h3 className="font-semibold mb-4">{t("admin.systemStatus")}</h3>
                   <div className="space-y-3">
-                    <div className="flex justify-between text-sm"><span>Base de Datos</span> <Badge variant="success">Online</Badge></div>
-                    <div className="flex justify-between text-sm"><span>Storage</span> <Badge variant="success">Online</Badge></div>
-                    <div className="flex justify-between text-sm"><span>Versión App</span> <span className="font-mono text-muted-foreground">v1.2.0</span></div>
+                    <div className="flex justify-between text-sm"><span>{t("admin.database")}</span> <Badge variant="success">Online</Badge></div>
+                    <div className="flex justify-between text-sm"><span>{t("admin.storage")}</span> <Badge variant="success">Online</Badge></div>
+                    <div className="flex justify-between text-sm"><span>{t("admin.appVersion")}</span> <span className="font-mono text-muted-foreground">v1.2.0</span></div>
                   </div>
                 </Card>
               </div>
@@ -363,7 +377,7 @@ export default function AdminPage() {
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {requests.length === 0 ? (
                   <div className="col-span-full text-center py-20 text-muted-foreground bg-card/30 rounded-xl border border-dashed border-border">
-                    No hay solicitudes pendientes 🎉
+                    {t("admin.noPendingRequests")} 🎉
                   </div>
                 ) : (
                   requests.map((r) => (
@@ -377,7 +391,7 @@ export default function AdminPage() {
 
                       <div className="mb-4">
                         <h3 className="font-semibold text-lg capitalize">{r.service_type.replace('_', ' ')}</h3>
-                        <p className="text-sm text-muted-foreground">Listing ID: <Link href={`/listing/${r.listing_id}`} className="font-mono bg-muted px-1 rounded hover:text-primary underline">{r.listing_id.substring(0, 8)}...</Link></p>
+                        <p className="text-sm text-muted-foreground">{t("admin.listingId")}: <Link href={`/listing/${r.listing_id}`} className="font-mono bg-muted px-1 rounded hover:text-primary underline">{r.listing_id.substring(0, 8)}...</Link></p>
                       </div>
 
                       {r.notes && (
@@ -389,13 +403,13 @@ export default function AdminPage() {
                       <div className="flex gap-2 mt-auto pt-4 border-t border-border/50">
                         {r.status !== 'done' && r.status !== 'rejected' && (
                           <>
-                            <button onClick={() => updateRequestStatus(r.id, "in_progress")} className="p-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition-colors" title="Procesar">⚙️</button>
-                            <button onClick={() => updateRequestStatus(r.id, "done")} className="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm font-medium">Aprobar</button>
-                            <button onClick={() => updateRequestStatus(r.id, "rejected")} className="p-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors" title="Rechazar">✕</button>
+                            <button onClick={() => updateRequestStatus(r.id, "in_progress")} className="p-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition-colors" title={t("admin.process")}>⚙️</button>
+                            <button onClick={() => updateRequestStatus(r.id, "done")} className="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm font-medium">{t("admin.approve")}</button>
+                            <button onClick={() => updateRequestStatus(r.id, "rejected")} className="p-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors" title={t("admin.reject")}>✕</button>
                           </>
                         )}
                         {(r.status === 'done' || r.status === 'rejected') && (
-                          <span className="text-sm text-muted-foreground w-full text-center italic">Finalizada</span>
+                          <span className="text-sm text-muted-foreground w-full text-center italic">{t("admin.completed")}</span>
                         )}
                       </div>
                     </Card>
@@ -411,7 +425,7 @@ export default function AdminPage() {
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {reports.length === 0 ? (
                   <div className="col-span-full text-center py-20 text-muted-foreground bg-card/30 rounded-xl border border-dashed border-border">
-                    No hay reportes de usuarios 🫡
+                    {t("admin.noReports")} 🫡
                   </div>
                 ) : (
                   reports.map(rep => (
@@ -424,10 +438,10 @@ export default function AdminPage() {
                       </div>
                       <h3 className="font-bold text-lg mb-1">{rep.reason}</h3>
                       <p className="text-sm text-foreground/80 mb-2">
-                        Tipo: <span className="font-mono bg-muted px-1 rounded uppercase text-xs">{rep.target_type}</span>
+                        {t("admin.type")}: <span className="font-mono bg-muted px-1 rounded uppercase text-xs">{rep.target_type}</span>
                       </p>
                       <div className="bg-muted/50 p-2 rounded text-xs font-mono mb-4 text-muted-foreground truncate">
-                        Target ID: {rep.target_id}
+                        {t("admin.targetId")}: {rep.target_id}
                       </div>
 
                       {rep.status === 'pending' && (
@@ -436,13 +450,13 @@ export default function AdminPage() {
                             onClick={() => updateReportStatus(rep.id, 'resolved')}
                             className="flex-1 py-1.5 bg-green-50 text-green-700 rounded hover:bg-green-100 text-sm font-medium transition-colors"
                           >
-                            Resolver
+                            {t("admin.resolve")}
                           </button>
                           <button
                             onClick={() => updateReportStatus(rep.id, 'dismissed')}
                             className="flex-1 py-1.5 bg-gray-50 text-gray-700 rounded hover:bg-gray-100 text-sm font-medium transition-colors"
                           >
-                            Descartar
+                            {t("admin.dismiss")}
                           </button>
                         </div>
                       )}
@@ -460,7 +474,7 @@ export default function AdminPage() {
               <div className="flex flex-col md:flex-row gap-4 mb-6 bg-card/40 p-4 rounded-xl border border-border/50 backdrop-blur-sm">
                 <input
                   type="text"
-                  placeholder="🔍 Buscar propiedad por nombre o ciudad..."
+                  placeholder={`🔍 ${t("admin.searchListings")}`}
                   className="flex-1 px-4 py-2 rounded-lg bg-background border border-border focus:ring-2 focus:ring-primary/20 outline-none"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -470,10 +484,10 @@ export default function AdminPage() {
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value as any)}
                 >
-                  <option value="all">Todos los estados</option>
-                  <option value="pending">Pendientes</option>
-                  <option value="verified">Verificados</option>
-                  <option value="archived">Archivados</option>
+                  <option value="all">{t("admin.allStatuses")}</option>
+                  <option value="pending">{t("admin.statusPending")}</option>
+                  <option value="verified">{t("admin.statusVerified")}</option>
+                  <option value="archived">{t("admin.statusArchived")}</option>
                 </select>
               </div>
 
@@ -482,10 +496,10 @@ export default function AdminPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-border/50 bg-muted/30">
-                        <th className="px-6 py-4 text-left font-semibold text-muted-foreground">Propiedad</th>
-                        <th className="px-6 py-4 text-left font-semibold text-muted-foreground">Estado</th>
-                        <th className="px-6 py-4 text-left font-semibold text-muted-foreground">Precio</th>
-                        <th className="px-6 py-4 text-center font-semibold text-muted-foreground">Acciones</th>
+                        <th className="px-6 py-4 text-left font-semibold text-muted-foreground">{t("admin.listing")}</th>
+                        <th className="px-6 py-4 text-left font-semibold text-muted-foreground">{t("admin.status")}</th>
+                        <th className="px-6 py-4 text-left font-semibold text-muted-foreground">{t("admin.price")}</th>
+                        <th className="px-6 py-4 text-center font-semibold text-muted-foreground">{t("admin.actions")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -498,7 +512,7 @@ export default function AdminPage() {
                           <td className="px-6 py-4">
                             <div className="flex flex-col gap-1.5 items-start">
                               <Badge variant={l.verified_status === 'verified' ? 'success' : l.verified_status === 'pending' ? 'warning' : l.verified_status === 'archived' ? 'danger' : 'default'}>
-                                {l.verified_status}
+                                {getListingStatusLabel(l.verified_status)}
                               </Badge>
                               {l.is_featured && <Badge variant="warning">Destacado</Badge>}
                             </div>
@@ -518,42 +532,42 @@ export default function AdminPage() {
                               </button>
 
                               <div className="flex bg-background border border-border rounded-lg overflow-hidden">
-                                <button
-                                  onClick={() => setVerifiedStatus(l.id, "pending")}
-                                  disabled={processingId === (l.id + "pending")}
-                                  className={`px-2 py-1.5 border-r border-border hover:bg-muted ${l.verified_status === 'pending' ? 'bg-yellow-50 text-yellow-700' : ''} ${processingId === (l.id + "pending") ? 'animate-pulse' : ''}`}
-                                  title="Pendiente"
-                                >
-                                  ⏳
-                                </button>
-                                <button
-                                  onClick={() => setVerifiedStatus(l.id, "verified")}
-                                  disabled={processingId === (l.id + "verified")}
-                                  className={`px-2 py-1.5 hover:bg-muted ${l.verified_status === 'verified' ? 'bg-green-50 text-green-700' : ''} ${processingId === (l.id + "verified") ? 'animate-pulse' : ''}`}
-                                  title="Verificar"
-                                >
-                                  ✅
-                                </button>
-                              </div>
-
-                              {l.verified_status !== 'archived' ? (
-                                <button onClick={() => setVerifiedStatus(l.id, 'archived')} className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 border border-gray-200" title="Archivar">📁</button>
-                              ) : (
-                                <button onClick={() => setVerifiedStatus(l.id, 'none')} className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 border border-blue-200" title="Restaurar">↺</button>
-                              )}
-
                               <button
-                                onClick={() => setConfirmModal({ isOpen: true, listingId: l.id })}
-                                className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 border border-red-200" title="Eliminar"
+                                onClick={() => setVerifiedStatus(l.id, "pending")}
+                                disabled={processingId === (l.id + "pending")}
+                                className={`px-2 py-1.5 border-r border-border hover:bg-muted ${l.verified_status === 'pending' ? 'bg-yellow-50 text-yellow-700' : ''} ${processingId === (l.id + "pending") ? 'animate-pulse' : ''}`}
+                                title={t("admin.statusPending")}
                               >
-                                🗑️
+                                ⏳
                               </button>
+                              <button
+                                onClick={() => setVerifiedStatus(l.id, "verified")}
+                                disabled={processingId === (l.id + "verified")}
+                                className={`px-2 py-1.5 hover:bg-muted ${l.verified_status === 'verified' ? 'bg-green-50 text-green-700' : ''} ${processingId === (l.id + "verified") ? 'animate-pulse' : ''}`}
+                                title={t("admin.verify")}
+                              >
+                                ✅
+                              </button>
+                            </div>
+
+                            {l.verified_status !== 'archived' ? (
+                              <button onClick={() => setVerifiedStatus(l.id, 'archived')} className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 border border-gray-200" title={t("admin.archive")}>📁</button>
+                            ) : (
+                              <button onClick={() => setVerifiedStatus(l.id, 'none')} className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 border border-blue-200" title={t("admin.restore")}>↺</button>
+                            )}
+
+                            <button
+                              onClick={() => setConfirmModal({ isOpen: true, listingId: l.id })}
+                              className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 border border-red-200" title={t("admin.delete")}
+                            >
+                              🗑️
+                            </button>
                             </div>
                           </td>
                         </tr>
                       ))}
                       {filteredListings.length === 0 && (
-                        <tr><td colSpan={4} className="text-center py-8 text-muted-foreground">No se encontraron propiedades.</td></tr>
+                        <tr><td colSpan={4} className="text-center py-8 text-muted-foreground">{t("admin.noListings")}</td></tr>
                       )}
                     </tbody>
                   </table>
@@ -569,7 +583,7 @@ export default function AdminPage() {
               <div className="mb-6 bg-card/40 p-4 rounded-xl border border-border/50 backdrop-blur-sm">
                 <input
                   type="text"
-                  placeholder="🔍 Buscar usuario por nombre o correo..."
+                  placeholder={`🔍 ${t("admin.searchUsers")}`}
                   className="w-full px-4 py-2 rounded-lg bg-background border border-border focus:ring-2 focus:ring-primary/20 outline-none"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -585,12 +599,12 @@ export default function AdminPage() {
                           {u.full_name ? u.full_name.charAt(0).toUpperCase() : u.email ? u.email.charAt(0).toUpperCase() : "?"}
                         </div>
                         <Badge variant={u.is_verified ? 'success' : 'default'} className="shadow-sm">
-                          {u.is_verified ? 'Verificado' : 'No Verificado'}
+                          {u.is_verified ? t("admin.verifiedLabel") : t("admin.unverified")}
                         </Badge>
                       </div>
 
                       <div>
-                        <h3 className="font-bold text-lg truncate" title={u.full_name}>{u.full_name || "Usuario sin nombre"}</h3>
+                        <h3 className="font-bold text-lg truncate" title={u.full_name}>{u.full_name || t("admin.unnamedUser")}</h3>
                         <p className="text-sm text-foreground/80 font-medium truncate flex items-center gap-1.5" title={u.email}>
                           📧 {u.email}
                         </p>
@@ -599,7 +613,7 @@ export default function AdminPage() {
                           <span className={`text-xs px-2.5 py-1 rounded-full font-medium border capitalize ${u.role === 'admin' ? 'bg-purple-100 text-purple-700 border-purple-200' :
                             u.role === 'landlord' ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-gray-100 text-gray-700 border-gray-200'
                             }`}>
-                            {u.role === 'landlord' ? '🏠 Publicante' : u.role === 'admin' ? '🛡️ Admin' : '👤 Usuario'}
+                            {u.role === 'landlord' ? `🏠 ${t("admin.roleLandlord")}` : u.role === 'admin' ? '🛡️ Admin' : `👤 ${t("admin.roleUser")}`}
                           </span>
                         </div>
                       </div>
@@ -607,7 +621,7 @@ export default function AdminPage() {
                       {/* Metadata Section */}
                       <div className="bg-muted/30 -mx-5 -mb-5 mt-2 p-4 border-t border-border/50 text-xs text-muted-foreground space-y-1.5">
                         <div className="flex justify-between">
-                          <span>Registrado:</span>
+                          <span>{t("admin.joined")}:</span>
                           <span className="font-mono">{new Date(u.created_at || "").toLocaleDateString()}</span>
                         </div>
                         <div className="flex justify-between items-center group/id">
@@ -629,15 +643,15 @@ export default function AdminPage() {
                         {processingId === u.id ? (
                           <span className="animate-spin">🔄</span>
                         ) : u.is_verified ? (
-                          <>🚫 Revocar Verificación</>
+                          <>🚫 {t("admin.revokeVerification")}</>
                         ) : (
-                          <>✅ Verificar Usuario</>
+                          <>✅ {t("admin.verifyUser")}</>
                         )}
                       </button>
                     </div>
                   </Card>
                 ))}
-                {filteredUsers.length === 0 && <p className="col-span-full text-center text-muted-foreground py-10">No se encontraron usuarios o faltan permisos.</p>}
+                {filteredUsers.length === 0 && <p className="col-span-full text-center text-muted-foreground py-10">{t("admin.noUsers")}</p>}
               </div>
             </section>
           )}
@@ -650,10 +664,10 @@ export default function AdminPage() {
                   <table className="w-full text-sm text-left">
                     <thead className="bg-muted/30 border-b border-border/50">
                       <tr>
-                        <th className="px-6 py-4 font-semibold text-muted-foreground">Fecha</th>
+                        <th className="px-6 py-4 font-semibold text-muted-foreground">{t("admin.date")}</th>
                         <th className="px-6 py-4 font-semibold text-muted-foreground">Admin</th>
-                        <th className="px-6 py-4 font-semibold text-muted-foreground">Acción</th>
-                        <th className="px-6 py-4 font-semibold text-muted-foreground">Detalles</th>
+                        <th className="px-6 py-4 font-semibold text-muted-foreground">{t("admin.action")}</th>
+                        <th className="px-6 py-4 font-semibold text-muted-foreground">{t("admin.details")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -676,7 +690,7 @@ export default function AdminPage() {
                         </tr>
                       ))}
                       {logs.length === 0 && (
-                        <tr><td colSpan={4} className="text-center py-10 text-muted-foreground">No hay actividad registrada.</td></tr>
+                        <tr><td colSpan={4} className="text-center py-10 text-muted-foreground">{t("admin.noActivity")}</td></tr>
                       )}
                     </tbody>
                   </table>
@@ -690,8 +704,8 @@ export default function AdminPage() {
 
       <ConfirmModal
         isOpen={confirmModal.isOpen}
-        title="¿Eliminar Propiedad?"
-        message="Esta acción no se puede deshacer. La propiedad será eliminada permanentemente de la base de datos."
+        title={t("admin.deleteListingTitle")}
+        message={t("admin.deleteListingMessage")}
         onConfirm={async () => {
           if (confirmModal.listingId) {
             const { error } = await supabase.from('listings').delete().eq('id', confirmModal.listingId);
